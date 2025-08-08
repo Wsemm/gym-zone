@@ -1,0 +1,31 @@
+class AppRoutes {
+  static const String landing = '/landing';
+  static const String updateApp = '/update-app';
+  static const String onboarding = '/onboarding';
+  static const String selectedGender = '/select-gender';
+  static const String login = '/login';
+  static const String register = '/register';
+  static const String verifyEmail = '/verify-email';
+  static const String otp = '/otp';
+  static const String forgotPassword = '/forgot-password';
+  static const String resetPassword = '/reset-password';
+  static const String home = '/home';
+  static const String notifications = '/notifications';
+  static const String subscriptions = '/subscriptions';
+  static const String visits = '/visits';
+  static const String settings = '/settings';
+  static const String qrScan = '/qr-scan';
+  static const String checkIn = '/check-in';
+  static const String updateProfile = '/update-profile';
+  static const String search = '/search';
+  static const String gymGallery = '/gym-gallery';
+  static const String offerPage = '/offerPage';
+  static const String categoriesPage = '/categoriesPage';
+  static const String cartPage = '/cartPage';
+  static const String navBarPage = '/navBarPage';
+  static const String individualSubscription = '/individual-subscription';
+  static const String giftSubscription = '/gift-subscription';
+  static const String confirmGiftPayment = '/confirm-gift-payment';
+  static const String individualGymDetails = '/individual-gym-details';
+  static const String successPayment = '/success-payment';
+}

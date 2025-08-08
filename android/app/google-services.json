@@ -1,0 +1,70 @@
+{
+  "project_info": {
+    "project_number": "960645673283",
+    "project_id": "gym-zones",
+    "storage_bucket": "gym-zones.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:960645673283:android:539c0ba9649de60057bff6",
+        "android_client_info": {
+          "package_name": "com.pixllmall.gym_zones"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "960645673283-0oulva72dog1qudi8q798tjvloke5ums.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pixllmall.gym_zones",
+            "certificate_hash": "57ccad02f07d3c1831807a56329d27fd5cedd91c"
+          }
+        },
+        {
+          "client_id": "960645673283-dhoprm616p9s36386ratv3dm59cfij53.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pixllmall.gym_zones",
+            "certificate_hash": "c51b0ccc34f37e81bc9322132e210400f932cda7"
+          }
+        },
+        {
+          "client_id": "960645673283-t77po096t0hm3986d10vtqbvuc4up05u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pixllmall.gym_zones",
+            "certificate_hash": "98e55b63821040fa8631d54567cd5c24fd50b54b"
+          }
+        },
+        {
+          "client_id": "960645673283-btmci45o628npba7vnuaabi3v4qg2o57.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlMQnLSwRvc-vQ33U553W0a1esFQlccEY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "960645673283-btmci45o628npba7vnuaabi3v4qg2o57.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "960645673283-80oev8m1mnvjrs3cuqaeloc7f1hc7jbk.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.pixllmall.gymZones"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
