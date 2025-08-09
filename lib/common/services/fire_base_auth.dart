@@ -1,4 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:gym_zones/controllers/auth_controller.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:get_storage/get_storage.dart';
 
@@ -45,23 +48,45 @@ class FireBaseAuthService {
         accessToken: appleCredential.authorizationCode,
       );
 
+      if (appleCredential.email != null) {
+        var isEmailRegistered = await Get.find<AuthController>()
+            .isEmailExist(appleCredential.email!);
+        if (isEmailRegistered == null) {
+          Get.back();
+
+          Get.snackbar(
+            'Error Account Already Exists'.tr,
+            'Please Sign In using email and password'.tr,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
+          return null;
+        } else if (isEmailRegistered == true) {
+          Get.find<AuthController>().isEmailRegisteredApple = true;
+        } else {
+          Get.find<AuthController>().isEmailRegisteredApple = false;
+        }
+      }
       print("Signing in to Firebase...");
-      final userCredential = await _fireBaseAuth.signInWithCredential(oAuthCredential);
-      
+      final userCredential =
+          await _fireBaseAuth.signInWithCredential(oAuthCredential);
+
       print("Firebase sign-in successful: ${userCredential.user?.email}");
-      
+
       if (userCredential.user != null) {
         String? firstName = appleCredential.givenName;
         String? lastName = appleCredential.familyName;
         final box = GetStorage();
-        final storageKey = 'apple_${appleCredential.userIdentifier ?? userCredential.user!.uid}';
+        final storageKey =
+            'apple_${appleCredential.userIdentifier ?? userCredential.user!.uid}';
         if (firstName != null || lastName != null) {
           box.write('${storageKey}_first', firstName ?? '');
           box.write('${storageKey}_last', lastName ?? '');
         } else {
           final savedFirst = box.read<String?>('${storageKey}_first');
           final savedLast = box.read<String?>('${storageKey}_last');
-          if (savedFirst != null && savedFirst.isNotEmpty) firstName = savedFirst;
+          if (savedFirst != null && savedFirst.isNotEmpty)
+            firstName = savedFirst;
           if (savedLast != null && savedLast.isNotEmpty) lastName = savedLast;
         }
         return {
@@ -71,18 +96,19 @@ class FireBaseAuthService {
           'user': userCredential.user,
         };
       }
-      
+
       return null;
     } catch (e) {
       print("Error during sign in with apple: $e");
       if (e.toString().contains('AuthorizationErrorCode.unknown')) {
-        print("Apple Sign-In error: User may have cancelled or there's a configuration issue");
+        print(
+            "Apple Sign-In error: User may have cancelled or there's a configuration issue");
       } else if (e.toString().contains('AuthorizationErrorCode.canceled')) {
         print("Apple Sign-In was cancelled by user");
       } else if (e.toString().contains('AuthorizationErrorCode.failed')) {
         print("Apple Sign-In failed due to system error");
       }
-      
+
       return null;
     }
   }

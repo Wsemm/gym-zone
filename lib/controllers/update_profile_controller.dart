@@ -79,7 +79,7 @@ class UpdateProfileController extends GetxController {
       _showImageToOthers = false;
       _socialEmail = Get.arguments["email"];
       _emailController.text = _socialEmail ?? '';
-      
+
       // Check if it's Apple Sign-In
       if (Get.arguments["isApple"] == true) {
         isApple = true;
@@ -152,7 +152,7 @@ class UpdateProfileController extends GetxController {
           AuthController authController = Get.put(AuthController());
           final emailToUse = _socialEmail ?? _emailController.text.trim();
           print("Registering with email: $emailToUse");
-          
+
           var result = await authController.register(
               _firstnameController.text.trim(),
               _lastnameController.text.trim(),
@@ -164,13 +164,14 @@ class UpdateProfileController extends GetxController {
               _heightController.text.isNotEmpty
                   ? _heightController.text.trim()
                   : null,
-              _ageController.text.isNotEmpty ? _ageController.text.trim() : null,
+              _ageController.text.isNotEmpty
+                  ? _ageController.text.trim()
+                  : null,
               _weightController.text.isNotEmpty
                   ? _weightController.text.trim()
                   : null,
-              isApple ? "2" : "1");
+              "1");
           print("Registration result: $result");
-          
           if (result) {
             print("Registration successful, navigating to home...");
             Get.offAllNamed(AppRoutes.home);
@@ -180,10 +181,10 @@ class UpdateProfileController extends GetxController {
             final loginOk = await authController.login(
               emailToUse,
               "hanyhany",
-              isApple ? "2" : "1",
+              "1",
             );
             print("Login result: $loginOk");
-            
+
             if (loginOk) {
               print("Login successful, navigating to home...");
               Get.offAllNamed(AppRoutes.home);

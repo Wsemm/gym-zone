@@ -204,7 +204,7 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
                       ),
                       child: FittedBox(
                         child: Text(
-                          'RESET PASSWORD'.tr,
+                          'Reset Password'.tr,
                         ),
                       ),
                     ),
@@ -212,55 +212,80 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
                 ),
                 SizedBox(height: 8.h),
                 GetBuilder<AuthController>(
-                  builder: (ctrl) => SizedBox(
-                    height: 44.h,
-                    width: MediaQuery.of(context).size.width * 0.5,
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        Get.dialog(
-                          const Center(
-                            child: CircularProgressIndicator(),
+                  builder: (ctrl) => Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 44.h,
+                        // width: MediaQuery.of(context).size.width * 0.5,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            Get.dialog(
+                              const Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            );
+
+                            final result = await ctrl.requestResetPassword(
+                              widget.email,
+                            );
+
+                            if (result) {
+                              Get.back();
+                              Get.snackbar(
+                                'Success'.tr,
+                                'Verification code re-sent successfully'.tr,
+                                backgroundColor: Colors.green,
+                                snackPosition: SnackPosition.TOP,
+                                margin: EdgeInsets.all(4.sp),
+                              );
+                            } else {
+                              Get.back();
+                              Get.snackbar(
+                                'Error'.tr,
+                                'An error occurred while sending OTP'.tr,
+                                backgroundColor: Colors.red,
+                                snackPosition: SnackPosition.TOP,
+                                margin: EdgeInsets.all(4.sp),
+                              );
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            elevation: 0,
+                            backgroundColor: Colors.white,
+                            foregroundColor: AppColors.primary,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.r),
+                            ),
                           ),
-                        );
-
-                        final result = await ctrl.requestResetPassword(
-                          widget.email,
-                        );
-
-                        if (result) {
-                          Get.back();
-                          Get.snackbar(
-                            'Success'.tr,
-                            'Verification code re-sent successfully'.tr,
-                            backgroundColor: Colors.green,
-                            snackPosition: SnackPosition.TOP,
-                            margin: EdgeInsets.all(4.sp),
-                          );
-                        } else {
-                          Get.back();
-                          Get.snackbar(
-                            'Error'.tr,
-                            'An error occurred while sending OTP'.tr,
-                            backgroundColor: Colors.red,
-                            snackPosition: SnackPosition.TOP,
-                            margin: EdgeInsets.all(4.sp),
-                          );
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        backgroundColor: Colors.white,
-                        foregroundColor: AppColors.primary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.r),
+                          child: Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                    text: 'Didn\'t receive the code?'.tr,
+                                    style: TextStyle(
+                                        color: Color.fromRGBO(128, 126, 126, 1),
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.w400)),
+                                TextSpan(
+                                  text: ' '.tr,
+                                ),
+                                TextSpan(
+                                  text: 'click here to resend it'.tr,
+                                  style: TextStyle(
+                                    decoration: TextDecoration.underline,
+                                    decorationColor: AppColors.primary,
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 14.sp,
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
-                      child: FittedBox(
-                        child: Text(
-                          'RESEND CODE'.tr,
-                        ),
-                      ),
-                    ),
+                    ],
                   ),
                 ),
               ],

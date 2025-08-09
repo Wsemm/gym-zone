@@ -42,12 +42,12 @@ class LandingController extends GetxController {
         'Accept': 'application/json',
       },
     );
-    log("# response : ${response.body}");
+    // log("# landing response : ${response.body}");
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
     if (response.statusCode == 200) {
       final currentVersion = packageInfo.version;
-    log("# currentVersion : ${currentVersion}");
+      log("# currentVersion : ${currentVersion}");
       final latestVersion = jsonDecode(response.body)['version'];
       final forecUpdate = jsonDecode(response.body)['force_update'];
 
@@ -77,5 +77,4 @@ class LandingController extends GetxController {
       return false;
     }
   }
-
 }

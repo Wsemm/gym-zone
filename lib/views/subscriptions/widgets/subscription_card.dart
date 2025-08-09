@@ -31,11 +31,11 @@ class SubscriptionCard extends StatelessWidget {
                   plan.durationText,
                   style: TextStyle(fontSize: 16.sp, color: AppColors.primary),
                 ),
-                SizedBox(height: 14.h),
+                SizedBox(height: 32.h),
                 Text(
                   '${'OMR'.tr} ${plan.amount.toStringAsFixed(3)}',
                   style: TextStyle(
-                    fontSize: 24.sp,
+                    fontSize: 16.sp,
                     color: AppColors.primary,
                     fontWeight: FontWeight.bold,
                   ),

@@ -8,12 +8,16 @@ class OurServicesCard extends StatelessWidget {
   final VoidCallback? onGroupGymTap;
   final VoidCallback? onOffersTap;
   final VoidCallback? onIndividualGymTap;
+  final VoidCallback? onOurServicesTap;
+  final int? index;
 
   const OurServicesCard({
     super.key,
     this.onGroupGymTap,
     this.onOffersTap,
     this.onIndividualGymTap,
+    this.index,
+    this.onOurServicesTap,
   });
 
   @override
@@ -27,21 +31,35 @@ class OurServicesCard extends StatelessWidget {
           child: Row(
             spacing: 15.w,
             children: [
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 5.w),
-                decoration: BoxDecoration(
-                    border: Border.all(color: AppColors.primary),
-                    borderRadius: BorderRadius.circular(4.r)),
-                child: Text(textAlign: TextAlign.start, "Our servcies".tr),
-              ),
+              GestureDetector(
+                  onTap: onOurServicesTap,
+                  child: Container(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 5.h, horizontal: 5.w),
+                    decoration: BoxDecoration(
+                        color: index == 0 ? AppColors.primary : null,
+                        border: Border.all(color: AppColors.primary),
+                        borderRadius: BorderRadius.circular(4.r)),
+                    child: Text(
+                      textAlign: TextAlign.start,
+                      "Our servcies".tr,
+                      style: TextStyle(
+                          color: index == 0 ? Colors.white : AppColors.primary),
+                    ),
+                  )),
               GestureDetector(
                 onTap: onGroupGymTap,
                 child: Container(
                   padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 5.w),
                   decoration: BoxDecoration(
+                      color: index == 1 ? AppColors.primary : null,
                       border: Border.all(color: AppColors.primary),
                       borderRadius: BorderRadius.circular(4.r)),
-                  child: Text("Group gyms".tr),
+                  child: Text(
+                    "Group gyms".tr,
+                    style: TextStyle(
+                        color: index == 1 ? Colors.white : AppColors.primary),
+                  ),
                 ),
               ),
               GestureDetector(
@@ -49,9 +67,14 @@ class OurServicesCard extends StatelessWidget {
                 child: Container(
                   padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 5.w),
                   decoration: BoxDecoration(
+                      color: index == 2 ? AppColors.primary : null,
                       border: Border.all(color: AppColors.primary),
                       borderRadius: BorderRadius.circular(4.r)),
-                  child: Text("Individual gyms".tr),
+                  child: Text(
+                    "Individual gyms".tr,
+                    style: TextStyle(
+                        color: index == 2 ? Colors.white : AppColors.primary),
+                  ),
                 ),
               ),
               GestureDetector(
@@ -59,9 +82,14 @@ class OurServicesCard extends StatelessWidget {
                 child: Container(
                   padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 5.w),
                   decoration: BoxDecoration(
+                      color: index == 3 ? AppColors.primary : null,
                       border: Border.all(color: AppColors.primary),
                       borderRadius: BorderRadius.circular(4.r)),
-                  child: Text("Offers".tr),
+                  child: Text(
+                    "Offers".tr,
+                    style: TextStyle(
+                        color: index == 3 ? Colors.white : AppColors.primary),
+                  ),
                 ),
               ),
             ],

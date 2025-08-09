@@ -69,8 +69,7 @@ class SubscriptionsController extends GetxController {
   }
 
   Future<SubscriptionStatus> subscribe(
-    int planId,
-  ) async {
+      {required bool isIndividual, required int planId, String? gymId}) async {
     final Completer<SubscriptionStatus> completer =
         Completer<SubscriptionStatus>();
 
@@ -78,20 +77,7 @@ class SubscriptionsController extends GetxController {
         ? totalAmount.value
         : totalAmountAfterDiscount.value;
 
-    // the main subscribe api
-
-    // final response = await http.post(
-    //   Uri.parse('${Api.API_URL}subscribe'),
-    //   body: {
-    //     'user_id': _user!.id,
-    //     'subscription_plan_id': planId.toString(),
-    //     'total_amount': totalAmountLast.toString(),
-    //   },
-    //   headers: {
-    //     'Accept': 'application/json',
-    //     'Authorization': 'Bearer ${Get.find<AuthController>().token}',
-    //   },
-    // );
+    var response;
 
     // --------------------------
     // my test subscribe
@@ -112,20 +98,35 @@ class SubscriptionsController extends GetxController {
     // );
 
     // subscribe individual api
-    final response = await http.post(
-      Uri.parse('${Api.API_URL}subscribe-individual'),
-      body: {
-        'user_id': _user!.id,
-        'subscription_plan_id': "1",
-        // 'total_amount': totalAmountLast.toString(),
-        "subscription_type": "individual",
-        "gym_id": "2291fbac-b0df-4101-9d86-665cd0aeda60"
-      },
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': 'Bearer ${Get.find<AuthController>().token}',
-      },
-    );
+    if (isIndividual) {
+      response = await http.post(
+        Uri.parse('${Api.API_URL}subscribe-individual'),
+        body: {
+          'user_id': _user!.id,
+          'subscription_plan_id': planId.toString(),
+          // 'total_amount': totalAmountLast.toString(),
+          "subscription_type": "individual",
+          "gym_id": gymId
+        },
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ${Get.find<AuthController>().token}',
+        },
+      );
+    } else {
+      response = await http.post(
+        Uri.parse('${Api.API_URL}subscribe'),
+        body: {
+          'user_id': _user!.id,
+          'subscription_plan_id': planId.toString(),
+          'total_amount': totalAmountLast.toString(),
+        },
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ${Get.find<AuthController>().token}',
+        },
+      );
+    }
 
     log("# response ${response.body}");
 

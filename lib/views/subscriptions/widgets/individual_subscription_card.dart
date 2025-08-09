@@ -42,16 +42,20 @@ class IndividualSubscriptionCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
                   "${plan.days.toString()} ${"days".tr}",
-                  style: TextStyle(fontSize: 16.sp, color: AppColors.primary),
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                  ),
                 ),
                 SizedBox(height: 14.h),
                 Text(
                   '${'OMR'.tr} ${plan.amount}',
                   style: TextStyle(
-                    fontSize: 24.sp,
+                    fontSize: 16.sp,
                     color: AppColors.primary,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
                 if (plan.basePrice != null)
@@ -67,26 +71,34 @@ class IndividualSubscriptionCard extends StatelessWidget {
                   ),
               ],
             ),
-            SizedBox(
+            Container(
+              margin: EdgeInsets.symmetric(
+                horizontal: 5.w,
+              ),
               width: double.maxFinite,
               child: ElevatedButton(
                 onPressed: () {
                   if (GetStorage().read('token') != null) {
-                    if (hasSubsribe) {
-                      Get.toNamed(AppRoutes.giftSubscription);
-                    } else {
-                      showGiftDialog(
-                        context: context,
-                        gift: () => Get.toNamed(AppRoutes.giftSubscription),
-                        subscribe: () {
-                          Get.find<SubscriptionsController>()
-                              .totalAmount
-                              .value = double.parse(plan.amount!);
-                          Get.toNamed(AppRoutes.cartPage,
-                              arguments: {"item": plan});
-                        },
-                      );
-                    }
+                    Get.find<SubscriptionsController>().totalAmount.value =
+                        double.parse(plan.amount!);
+                    Get.toNamed(AppRoutes.cartPage,
+                        arguments: {"item": plan, "isIndividual": true});
+
+                    // if (hasSubsribe) {
+                    //   Get.toNamed(AppRoutes.giftSubscription);
+                    // } else {
+                    //   showGiftDialog(
+                    //     context: context,
+                    //     gift: () => Get.toNamed(AppRoutes.giftSubscription),
+                    //     subscribe: () {
+                    //       Get.find<SubscriptionsController>()
+                    //           .totalAmount
+                    //           .value = double.parse(plan.amount!);
+                    //       Get.toNamed(AppRoutes.cartPage,
+                    //           arguments: {"item": plan});
+                    //     },
+                    //   );
+                    // }
                   } else {
                     Get.toNamed(AppRoutes.login);
                   }
@@ -95,7 +107,7 @@ class IndividualSubscriptionCard extends StatelessWidget {
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24.r),
+                    borderRadius: BorderRadius.circular(8.r),
                   ),
                 ),
                 child: Text(

@@ -5,6 +5,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:gym_zones/common/constants/app_images.dart';
 import 'package:gym_zones/common/constants/constants.dart';
 import 'package:gym_zones/common/constants/my_enum.dart';
@@ -76,6 +77,14 @@ class HomeView extends StatelessWidget {
                   )
                 else
                   Text('Welcome to Gym Zones 👋'.tr),
+                if (ctrl.user != null && ctrl.user!.hasSubscription)
+                  Image.asset(
+                    Get.isDarkMode
+                        ? 'assets/images/splash-image-white.png'
+                        : 'assets/images/splash-image-primary.png',
+                    height: 50.h,
+                    width: 50.w,
+                  ),
                 if (ctrl.user != null)
                   Row(
                     children: [
@@ -95,9 +104,12 @@ class HomeView extends StatelessWidget {
                               Positioned(
                                 top: 0,
                                 right:
-                                    (Get.locale?.languageCode ?? 'en') == 'en' ? 0 : null,
-                                left:
-                                    (Get.locale?.languageCode ?? 'en') == 'en' ? null : 0,
+                                    (Get.locale?.languageCode ?? 'en') == 'en'
+                                        ? 0
+                                        : null,
+                                left: (Get.locale?.languageCode ?? 'en') == 'en'
+                                    ? null
+                                    : 0,
                                 child: Container(
                                   height: 14.h,
                                   width: 14.h,
@@ -194,6 +206,11 @@ class HomeView extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            // InkWell(
+                            //     onTap: () {
+                            //       GetStorage().erase();
+                            //     },
+                            //     child: Text("Clear")),
                             SizedBox(
                               height: 3.h,
                             ),
@@ -227,6 +244,14 @@ class HomeView extends StatelessWidget {
                                 ),
                               ),
                             ),
+                            if (ctrl.user != null &&
+                                ctrl.user!.subscriptionType ==
+                                    SubscriptionType.trial.name &&
+                                ctrl.user!.subscriptionStatus ==
+                                    SubscriptionStatus.inactive.name) ...[
+                              SizedBox(height: 16.h),
+                              const FreeWeekCard()
+                            ],
                             SizedBox(
                               height: 16.h,
                             ),
@@ -236,7 +261,12 @@ class HomeView extends StatelessWidget {
                                         SubscriptionType.both.name ||
                                     ctrl.user!.subscriptionType ==
                                         SubscriptionType.individual.name)) ...[
-                              Text("Statistics".tr),
+                              Text(
+                                "Statistics".tr,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 16.sp),
+                              ),
                               SizedBox(
                                 width: double.infinity,
                                 child: Card(
@@ -341,19 +371,16 @@ class HomeView extends StatelessWidget {
                                 ),
                               )
                             ],
-                            SizedBox(height: 24.h),
-                            if (ctrl.user != null &&
-                                ctrl.user!.subscriptionType ==
-                                    SubscriptionType.trial.name &&
-                                ctrl.user!.subscriptionStatus ==
-                                    SubscriptionStatus.inactive.name)
-                              const FreeWeekCard(),
+
                             SizedBox(
-                              height: 16.h,
+                              height: 24.h,
                             ),
 
                             if (ctrl.ad.data != null) ...[
-                              Text("Advertisements".tr),
+                              Text("Advertisements".tr,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 16.sp)),
                               CarouselSlider.builder(
                                 itemCount: ctrl.ad.data!.length,
                                 itemBuilder: (context, index, realIdx) {
@@ -397,8 +424,8 @@ class HomeView extends StatelessWidget {
                             if (ctrl.topUsers!.isNotEmpty) ...[
                               SizedBox(height: 16.h),
                               Text(
-                                '${'🔥 Top in'.tr} ${DateFormat.MMMM(Get.locale?.languageCode ?? 'en').format(DateTime.now())}'
-                                    .tr,
+                                // '${'🔥 Top in'.tr} ${DateFormat.MMMM(Get.locale!.languageCode).format(DateTime.now())}'.tr,
+                                'Top ten athletes'.tr,
                                 style: TextStyle(
                                   fontSize: 18.sp,
                                   fontWeight: FontWeight.bold,
@@ -418,9 +445,12 @@ class HomeView extends StatelessWidget {
                             ],
                             SizedBox(height: 16.h),
                             OurServicesCard(
-                              onGroupGymTap: ctrl.scrollToGyms,
+                              key: ctrl.ourServicesKey,
+                              onOurServicesTap: ctrl.scrollToOurServices,
+                              onGroupGymTap: ctrl.scrollToGroupGyms,
                               onOffersTap: ctrl.scrollToOffers,
                               onIndividualGymTap: ctrl.scrollToIndividualGyms,
+                              index: ctrl.serviceIndex,
                             ),
                             SizedBox(height: 16.h),
                             Row(
@@ -554,7 +584,7 @@ class HomeView extends StatelessWidget {
                                     .h, // Set a fixed height for horizontal scroll
                                 child: ListView.builder(
                                   scrollDirection: Axis.horizontal,
-                                  itemCount: ctrl.individualGyms?.length ?? 0,
+                                  itemCount: ctrl.individualGyms?.length,
                                   itemBuilder: (context, index) => Container(
                                     width:
                                         0.8.sw, // Set width for each gym card

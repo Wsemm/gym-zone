@@ -30,10 +30,6 @@ class IndividualGymDetailsScreen
 
   @override
   Widget build(BuildContext context) {
-    List<String> formattedTimes = controller.gym!.schedules!.map((scudule) {
-      final dt = DateFormat("HH:mm:ss").parse(scudule.startTime!.first);
-      return DateFormat("hh:mm a").format(dt);
-    }).toList();
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent, // or any color
@@ -350,6 +346,7 @@ class IndividualGymDetailsScreen
                           style: TextStyle(
                               fontSize: 12.sp,
                               fontWeight: FontWeight.w500,
+                              color: Color.fromRGBO(121, 121, 121, 1),
                               height: 1.6),
                         ),
                       ),
@@ -382,7 +379,7 @@ class IndividualGymDetailsScreen
                                   gridDelegate:
                                       SliverGridDelegateWithFixedCrossAxisCount(
                                     crossAxisCount: 2,
-                                    childAspectRatio: 0.75,
+                                    childAspectRatio: 0.70,
                                     crossAxisSpacing: 8.w,
                                     mainAxisSpacing: 8.h,
                                   ),
@@ -451,7 +448,7 @@ class IndividualGymDetailsScreen
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 2,
-                                  childAspectRatio: 1.6,
+                                  childAspectRatio: 1.5,
                                   crossAxisSpacing: 25.w,
                                   mainAxisSpacing: 15.h,
                                 ),
@@ -476,6 +473,9 @@ class IndividualGymDetailsScreen
                                             ),
                                             Text(
                                               "${Get.locale == Locale("en") ? scudule.dayOfWeek : scudule.dayOfWeekAr}",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 16.sp),
                                             ),
                                           ],
                                         ),
@@ -560,7 +560,7 @@ class IndividualGymDetailsScreen
                         child: SizedBox(
                           width: Get.width,
                           child: Text(
-                            "Gym pictures".tr,
+                            "Photo Gallery".tr,
                             textAlign: TextAlign.start,
                             style: TextStyle(
                                 fontSize: 16.sp, fontWeight: FontWeight.w500),
@@ -608,9 +608,15 @@ class IndividualGymDetailsScreen
                       SizedBox(
                         height: 10.h,
                       ),
-                      Text("Gym branches".tr,
-                          style: TextStyle(
-                              fontSize: 16.sp, fontWeight: FontWeight.w500)),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text("Gym branches".tr,
+                              style: TextStyle(
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w500)),
+                        ],
+                      ),
 
                       SizedBox(
                         height: 10.h,

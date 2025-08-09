@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:gym_zones/common/widgets/rebi_button.dart';
 import 'package:gym_zones/models/Individual_subscription_plan.dart';
+import 'package:gym_zones/models/individual_gym.dart';
 import 'package:gym_zones/views/subscriptions/widgets/cart_item_widget.dart';
 import '../../common/constants/constants.dart';
 import '../../common/navigation/app_routes.dart';
@@ -20,7 +21,11 @@ class CartScreen extends GetView<SubscriptionsController> {
   Widget build(BuildContext context) {
     SubscriptionPlan? item;
     MyNewData? itemIndividual;
+    bool isIndividual = false;
     if (Get.arguments != null) {
+      if (Get.arguments["isIndividual"] != null) {
+        isIndividual = Get.arguments["isIndividual"];
+      }
       if (Get.arguments["item"] is SubscriptionPlan) {
         item = Get.arguments["item"];
       } else {
@@ -286,7 +291,10 @@ class CartScreen extends GetView<SubscriptionsController> {
 
                     final ctrl = Get.find<SubscriptionsController>();
 
-                    final response = await ctrl.subscribe(subscriptionId);
+                    final response = await ctrl.subscribe(
+                        planId: subscriptionId,
+                        isIndividual: isIndividual,
+                        gymId: itemIndividual?.id.toString());
 
                     if (response == SubscriptionStatus.alreadySubscribed) {
                       Get.back();

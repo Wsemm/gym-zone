@@ -20,7 +20,7 @@ class AuthController extends GetxController {
 
   String? _token = GetStorage().read('token');
   String? get token => _token;
-
+  bool? isEmailRegisteredApple;
   final FireBaseAuthService fireBaseAuthService = FireBaseAuthService();
 
   void removeTokenAndUser() {
@@ -39,10 +39,31 @@ class AuthController extends GetxController {
     return response.statusCode == 204;
   }
 
+  Future<bool?> isEmailExist(String email) async {
+    final response = await http.get(
+      Uri.parse('${Api.isEmailRegistered}?email=$email'),
+      headers: {
+        'Accept': 'application/json',
+      },
+    );
+    var responseBody = jsonDecode(response.body);
+    if (responseBody["message"] == "Email address is already registered" &&
+        responseBody["is_google"] == 1) {
+      return true;
+    } else if (responseBody["message"] == "Email address is not registered") {
+      return false;
+    }
+    if (responseBody["message"] == "Email address is already registered" &&
+        responseBody["is_google"] == 0) {
+      return null;
+    }
+  }
+
   Future<bool> signInWithGoogle() async {
     try {
       final GoogleSignIn googleSignIn = GoogleSignIn(
-        clientId: "960645673283-btmci45o628npba7vnuaabi3v4qg2o57.apps.googleusercontent.com",
+        clientId:
+            "960645673283-btmci45o628npba7vnuaabi3v4qg2o57.apps.googleusercontent.com",
         scopes: ['email', 'profile'],
       );
 
@@ -70,16 +91,28 @@ class AuthController extends GetxController {
           accessToken: googleAuth.accessToken,
           idToken: googleAuth.idToken,
         );
+        var isEmailRegistered = await isEmailExist(googleUser.email);
+        if (isEmailRegistered == null) {
+          Get.back();
+
+          Get.snackbar(
+            'Error Account Already Exists'.tr,
+            'Please Sign In using email and password'.tr,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
+          return false;
+        }
 
         print('Firebase credential created, signing in...');
 
         final userCredential = await firebase_auth.FirebaseAuth.instance
             .signInWithCredential(credential);
-        
+
         Get.back();
-        
+
         print('Firebase sign-in successful: ${userCredential.user?.email}');
-        
+
         if (userCredential.user != null) {
           final userEmail = userCredential.user!.email;
           String? firstName;
@@ -106,15 +139,23 @@ class AuthController extends GetxController {
             }
           }
           if (userEmail != null) {
-            Get.offAllNamed(
-              AppRoutes.updateProfile,
-              arguments: {
-                "email": userEmail,
-                "firstName": firstName ?? '',
-                "lastName": lastName ?? '',
-                "isApple": false,
-              },
-            );
+            if (isEmailRegistered == true) {
+              var result = await login(userEmail, "hanyhany", "1");
+              if (result) {
+                Get.find<CustomBottomNavBarController>().changePage(0);
+                Get.offAllNamed(AppRoutes.home);
+              }
+            } else if (isEmailRegistered == false) {
+              Get.offAllNamed(
+                AppRoutes.updateProfile,
+                arguments: {
+                  "email": userEmail,
+                  "firstName": firstName ?? '',
+                  "lastName": lastName ?? '',
+                  "isApple": false,
+                },
+              );
+            }
           }
           return true;
         }
@@ -169,10 +210,10 @@ class AuthController extends GetxController {
         final responseBody = jsonDecode(response.body);
         final user = User.fromJson(responseBody['user']);
         _token = responseBody['token'];
-        
+
         await GetStorage().write('user', user.toJson());
         await GetStorage().write('token', _token);
-        
+
         return true;
       }
       return false;
@@ -192,25 +233,33 @@ class AuthController extends GetxController {
       );
 
       final result = await fireBaseAuthService.signInWithApple();
-      
+
       Get.back();
-      
+
       if (result != null) {
         final email = result['email'] as String?;
         final firstName = result['firstName'] as String?;
         final lastName = result['lastName'] as String?;
-        
+
         if (email != null && email.isNotEmpty) {
-          Get.offAllNamed(AppRoutes.updateProfile, arguments: {
-            "email": email,
-            "firstName": firstName ?? '',
-            "lastName": lastName ?? '',
-            "isApple": true,
-          });
+          if (isEmailRegisteredApple == true) {
+            var result = await login(email, "hanyhany", "1");
+            if (result) {
+              Get.find<CustomBottomNavBarController>().changePage(0);
+              Get.offAllNamed(AppRoutes.home);
+            }
+          } else if (isEmailRegisteredApple == false) {
+            Get.offAllNamed(AppRoutes.updateProfile, arguments: {
+              "email": email,
+              "firstName": firstName ?? '',
+              "lastName": lastName ?? '',
+              "isApple": true,
+            });
+          }
           return true;
         }
       }
-      
+
       Get.snackbar(
         'Error'.tr,
         'Apple Sign-In was cancelled or failed. Please try again.'.tr,
@@ -222,9 +271,9 @@ class AuthController extends GetxController {
       if (Get.isDialogOpen == true) {
         Get.back();
       }
-      
+
       print('Apple Sign-In Error: $e');
-      
+
       String errorMessage = 'Apple Sign-In was cancelled or failed.';
       if (e.toString().contains('AuthorizationErrorCode.unknown')) {
         errorMessage = 'Apple Sign-In was cancelled or configuration issue.';
@@ -233,7 +282,7 @@ class AuthController extends GetxController {
       } else if (e.toString().contains('AuthorizationErrorCode.failed')) {
         errorMessage = 'Apple Sign-In failed. Please try again.';
       }
-      
+
       Get.snackbar(
         'Error'.tr,
         errorMessage.tr,
@@ -278,8 +327,8 @@ class AuthController extends GetxController {
           'Content-Type': 'application/json',
         },
       ).timeout(Duration(seconds: 30));
-      
-      log(response.body);
+
+      log("register response body${response.body}");
 
       if (response.statusCode == 201) {
         final responseBodyDecoded = jsonDecode(response.body);
@@ -354,7 +403,7 @@ class AuthController extends GetxController {
           'Accept': 'application/json',
         },
       ).timeout(Duration(seconds: 30));
-      
+
       log("==============" + response.body.toString());
 
       if (response.statusCode == 200) {

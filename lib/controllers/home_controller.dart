@@ -28,12 +28,14 @@ class HomeController extends GetxController {
   RxInt analyticsIndex = 0.obs;
 
   bool isLoading = true;
+  int? serviceIndex;
 
   // ScrollController and GlobalKey for gym section scrolling
   late ScrollController scrollController;
   final GlobalKey gymsKey = GlobalKey();
   final GlobalKey individualGymsKey = GlobalKey();
   final GlobalKey offersKey = GlobalKey();
+  final GlobalKey ourServicesKey = GlobalKey();
 
   Ad ad = Ad();
 
@@ -50,9 +52,11 @@ class HomeController extends GetxController {
     super.onClose();
   }
 
-  void scrollToGyms() {
+  void scrollToGroupGyms() {
     final context = gymsKey.currentContext;
     if (context != null) {
+      serviceIndex = 1;
+      update();
       Scrollable.ensureVisible(
         context,
         duration: const Duration(milliseconds: 800),
@@ -64,6 +68,9 @@ class HomeController extends GetxController {
   void scrollToOffers() {
     final context = offersKey.currentContext;
     if (context != null) {
+      serviceIndex = 3;
+      update();
+
       Scrollable.ensureVisible(
         context,
         duration: const Duration(milliseconds: 800),
@@ -75,6 +82,21 @@ class HomeController extends GetxController {
   void scrollToIndividualGyms() {
     final context = individualGymsKey.currentContext;
     if (context != null) {
+      serviceIndex = 2;
+      update();
+      Scrollable.ensureVisible(
+        context,
+        duration: const Duration(milliseconds: 800),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
+  void scrollToOurServices() {
+    final context = ourServicesKey.currentContext;
+    if (context != null) {
+      serviceIndex = 0;
+      update();
       Scrollable.ensureVisible(
         context,
         duration: const Duration(milliseconds: 800),
@@ -93,7 +115,7 @@ class HomeController extends GetxController {
       _topUsers = [];
       _token = Get.find<AuthController>().token;
       update();
-      
+
       if (_token != null) {
         _user = User.fromJson(GetStorage().read('user'));
 
@@ -105,9 +127,9 @@ class HomeController extends GetxController {
               'Authorization': 'Bearer $_token',
             },
           ).timeout(const Duration(seconds: 10));
-          
+
           log("# user information : ${response.statusCode}");
-          
+
           if (response.statusCode == 401) {
             Get.find<AuthController>().removeTokenAndUser();
             Get.offNamed(AppRoutes.login);
@@ -136,25 +158,24 @@ class HomeController extends GetxController {
       } catch (e) {
         log("Error fetching nearest gyms: $e");
       }
-      
-      try {
-        await _fetchIndividualGyms();
-      } catch (e) {
-        log("Error fetching individual gyms: $e");
-      }
-      
+
+      // try {
+      await _fetchIndividualGyms();
+      // } catch (e) {
+      // log("Error fetching individual gyms: $e");
+      // }
+
       try {
         await _fetchTopUsers();
       } catch (e) {
         log("Error fetching top users: $e");
       }
-      
+
       try {
         await _fetchAds();
       } catch (e) {
         log("Error fetching ads: $e");
       }
-      
     } catch (e) {
       log("Error in initData: $e");
     } finally {
@@ -260,8 +281,7 @@ class HomeController extends GetxController {
   Future<void> _fetchNearestGyms() async {
     isLoading = true;
     bool? result = await checkLocationPermission();
-    final position =
-        result == true ? await _determinePosition() : null;
+    final position = result == true ? await _determinePosition() : null;
 
     if (position == null) {
       _nearestGyms = [];
@@ -335,19 +355,18 @@ class HomeController extends GetxController {
 
   Future<void> _fetchIndividualGyms() async {
     isLoading = true;
-    bool? result = await checkLocationPermission();
-    final position =
-        result == true ? await _determinePosition() : null;
+    // bool? result = await checkLocationPermission();
+    // final position = result == true ? await _determinePosition() : null;
 
-    if (position == null) {
-      _individualGyms = [];
-      RebiMessage.error(
-          msg:
-              "The application does not have permission to access the location."
-                  .tr);
-      update();
-      return;
-    }
+    // if (position == null) {
+    //   _individualGyms = [];
+    //   RebiMessage.error(
+    //       msg:
+    //           "The application does not have permission to access the location."
+    //               .tr);
+    //   update();
+    //   return;
+    // }
 
     final url = Uri.parse('${Api.API_URL}gyms/search');
 
@@ -362,47 +381,48 @@ class HomeController extends GetxController {
     log("# Individual Gyms  : ${response.request}");
 
     if (response.statusCode == 200) {
-      try {
-        final decodedJson = jsonDecode(response.body);
-        log("# Decoded JSON type: ${decodedJson.runtimeType}");
-        log("# Decoded JSON: $decodedJson");
+      // try {
+      final decodedJson = jsonDecode(response.body);
+      log("# Decoded JSON type: ${decodedJson.runtimeType}");
+      log("# Decoded JSON: $decodedJson");
+      log("# Data length: ${decodedJson["data"].length}");
 
-        List<dynamic> individualGymsList;
+      List<dynamic> individualGymsList;
 
-        // Check if the response is a List or a Map
-        if (decodedJson is List) {
-          individualGymsList = decodedJson;
-        } else if (decodedJson is Map<String, dynamic>) {
-          // Handle case where response is wrapped in an object
-          if (decodedJson.containsKey('data')) {
-            individualGymsList = decodedJson['data'] as List<dynamic>;
-          } else if (decodedJson.containsKey('gyms')) {
-            individualGymsList = decodedJson['gyms'] as List<dynamic>;
-          } else {
-            // If it's a map but doesn't contain expected keys, treat as error
-            log("# Unexpected response structure: $decodedJson");
-            _individualGyms = [];
-            RebiMessage.error(msg: "Unexpected response format from server".tr);
-            update();
-            return;
-          }
+      // Check if the response is a List or a Map
+      if (decodedJson is List) {
+        individualGymsList = decodedJson;
+      } else if (decodedJson is Map<String, dynamic>) {
+        // Handle case where response is wrapped in an object
+        if (decodedJson.containsKey('data')) {
+          individualGymsList = decodedJson['data'] as List<dynamic>;
+        } else if (decodedJson.containsKey('gyms')) {
+          individualGymsList = decodedJson['gyms'] as List<dynamic>;
         } else {
-          log("# Unexpected response type: ${decodedJson.runtimeType}");
+          // If it's a map but doesn't contain expected keys, treat as error
+          log("# Unexpected response structure: $decodedJson");
           _individualGyms = [];
-          RebiMessage.error(msg: "Invalid response format from server".tr);
+          RebiMessage.error(msg: "Unexpected response format from server".tr);
           update();
           return;
         }
-
-        _individualGyms = List<IndividualGym>.from(
-            individualGymsList.map((g) => IndividualGym.fromJson(g))).toList();
-        update();
-      } catch (e) {
-        log("# Error parsing gym data: $e");
+      } else {
+        log("# Unexpected response type: ${decodedJson.runtimeType}");
         _individualGyms = [];
-        RebiMessage.error(msg: "Failed to parse gym data".tr);
+        RebiMessage.error(msg: "Invalid response format from server".tr);
         update();
+        return;
       }
+
+      _individualGyms = List<IndividualGym>.from(
+          individualGymsList.map((g) => IndividualGym.fromJson(g))).toList();
+      update();
+      // } catch (e) {
+      //   log("# Error parsing gym data: $e");
+      //   _individualGyms = [];
+      //   RebiMessage.error(msg: "Failed to parse gym data".tr);
+      //   update();
+      // }
     } else {
       log("# Error fetching gyms: ${response.statusCode} - ${response.body}");
       _individualGyms = [];

@@ -19,7 +19,8 @@ class AdCard extends StatelessWidget {
         image: DecorationImage(
           image:
               // NetworkImage("https://placehold.co/600x400/000000/FFFFFF.png"),
-              NetworkImage(ad.image ?? "https://placehold.co/600x400/000000/FFFFFF.png"),
+              NetworkImage(
+                  ad.image ?? "https://placehold.co/600x400/000000/FFFFFF.png"),
           onError: (error, stackTrace) => Image.asset(
             "assets/images/launcher-icon.png",
             height: 280.h,
@@ -38,7 +39,9 @@ class AdCard extends StatelessWidget {
           children: [
             SizedBox(height: 16.h),
             Text(
-              Get.locale == const Locale("en") ? (ad.title ?? "Ad Title") : (ad.titleAr ?? "عنوان الإعلان"),
+              Get.locale == const Locale("en")
+                  ? (ad.title ?? "Ad Title")
+                  : (ad.titleAr ?? "عنوان الإعلان"),
               style: TextStyle(
                   color: Colors.black,
                   fontSize: 16.sp,

@@ -66,7 +66,10 @@ class AppPages {
       name: AppRoutes.home,
       page: () => const HomeView(),
       binding: HomeBinding(),
-      // إزالة الـ middlewares مؤقتاً لحل مشكلة الشاشة السوداء
+      middlewares: [
+        OnboardingMiddleware(),
+        GenderUnknownMiddleware(),
+      ],
     ),
     GetPage(
       name: AppRoutes.login,

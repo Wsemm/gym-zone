@@ -33,7 +33,9 @@ class IndividualGymDetailsScreenController extends GetxController {
             "${_user != null ? user?.gender : GetStorage().read('gender')}"
       }),
     );
+    log("# request ${response.request}");
 
+    log("# response ${response.body}");
     if (response.statusCode == 200) {
       isLoading = false;
 

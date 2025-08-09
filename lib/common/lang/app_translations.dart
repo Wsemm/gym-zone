@@ -38,7 +38,7 @@ class AppTranslations extends Translations {
           'Renew Subscription': 'تجديد الاشتراك',
           'Search gyms...': 'البحث عن صالات رياضية...',
           '🔥 Top in': '🔥 الأفضل في',
-          'Points': 'نقاط',
+          'Points count': 'عدد النقاط',
           '📌 Nearest Gyms': '📌 أقرب الصالات الرياضية',
           'Locate on Maps': 'الموقع على الخريطة',
           'No gyms found for your gender! Please make sure location access is enabled for this app to allow us to identify and suggest the closest gyms in your vicinity':
@@ -160,7 +160,7 @@ class AppTranslations extends Translations {
           'Verification code was sent to': 'تم إرسال رمز التحقق إلى',
           'New password': 'كلمة السر الجديدة',
           'Confirm new password': 'تأكيد كلمة المرور الجديدة',
-          'RESET PASSWORD': 'إعادة تعيين كلمة المرور',
+          'Reset Password': 'إعادة تعيين كلمة المرور',
           'RESEND CODE': 'إعادة إرسال الرمز',
           'Phone number is not registered': 'رقم الهاتف غير مسجل',
           'An error occurred while registering. Make sure email and phone number not registered before':
@@ -296,7 +296,7 @@ class AppTranslations extends Translations {
           "Weekly class times": "مواعيد الحصص الأسبوعية",
           "Sunday": "الأحد",
           "Monday": "الأثنين",
-          "Gym pictures": "صور الصالة",
+          "Photo Gallery": "معرض الصور",
           "How do you like to subscribe?": "كيف تحب الاشتراك؟",
           "Do you want to subscribe or you want to buy a gift for someone else?":
               "هل تريد الاشتراك أو تريد شراء هدية لشخص آخر؟",
@@ -334,6 +334,9 @@ class AppTranslations extends Translations {
           "Individual sub": "الإشتراك الفردي",
           "View ad": "عرض الإعلان",
           "Gym branches": "فروع الصالة",
+          "Please Sign In using email and password":
+              "يرجى تسجيل الدخول باستخدام البريد الإلكتروني وكلمة المرور",
+          "Error Account Already Exists": "الحساب موجود بالفعل",
         },
       };
 }

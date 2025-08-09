@@ -358,7 +358,11 @@ class Schedules {
     gymId = json["gym_id"];
     dayOfWeek = json["day_of_week"];
     dayOfWeekAr = json["day_of_week_ar"];
-    startTime = List<String>.from(jsonDecode(json["start_time"]));
+
+    startTime = json["start_time"] == null
+        ? null
+        : (json["start_time"] as List).map((e) => e.toString()).toList();
+
     isRecurring = json["is_recurring"];
     createdAt = json["created_at"];
     updatedAt = json["updated_at"];

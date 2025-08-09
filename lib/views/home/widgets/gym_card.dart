@@ -26,7 +26,9 @@ class GymCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.h),
+      padding: EdgeInsets.symmetric(
+        vertical: 8.h,
+      ),
       child: InkWell(
         onTap: () {
           Navigator.push(
@@ -40,7 +42,7 @@ class GymCard extends StatelessWidget {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
           child: Padding(
-            padding: EdgeInsets.all(4.sp),
+            padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 5.w),
             child: Column(
               children: [
                 if (gym.gallery != null && gym.gallery!.isNotEmpty)

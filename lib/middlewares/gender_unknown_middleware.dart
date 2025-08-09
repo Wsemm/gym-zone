@@ -9,8 +9,7 @@ class GenderUnknownMiddleware extends GetMiddleware {
   RouteSettings? redirect(String? route) {
     final user = GetStorage().read('user');
     final gender = GetStorage().read('gender');
-    // إذا لم يكن هناك مستخدم، لا نحول إلى أي مكان (يسمح بالوصول للصفحة الرئيسية)
-    if (user != null && gender == null) {
+    if (user == null && gender == null) {
       return const RouteSettings(name: AppRoutes.selectedGender);
     }
     return null;

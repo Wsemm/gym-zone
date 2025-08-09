@@ -19,7 +19,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = MyHttpOverrides();
   await GetStorage.init();
-  
+
   // تهيئة Firebase مع معالجة أفضل للأخطاء
   try {
     await Firebase.initializeApp(
@@ -30,7 +30,7 @@ void main() async {
     print('Firebase initialization error: $e');
     // إذا فشل Firebase، نستمر بدونها
   }
-  
+
   // تهيئة Controllers
   try {
     await Get.putAsync(() => AuthController().init());
@@ -56,7 +56,7 @@ class GymZonesApp extends StatelessWidget {
     GetStorage().writeIfNull('lang', Get.deviceLocale!.languageCode);
     GetStorage()
         .writeIfNull('isDarkModeOn', Get.theme.brightness == Brightness.dark);
-    GetStorage().remove('gender');
+    // GetStorage().remove('gender');
 
     return SafeArea(
       top: false,

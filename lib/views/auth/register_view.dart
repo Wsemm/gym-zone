@@ -327,9 +327,17 @@ class _RegisterViewState extends State<RegisterView> {
                         constraints: BoxConstraints(maxWidth: 0.3.sw),
                         child: DropdownButtonFormField<String>(
                           decoration: InputDecoration(
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.r),
+                              borderSide: BorderSide(color: Colors.black),
+                            ),
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20.r),
+                              borderRadius: BorderRadius.circular(8.r),
                               borderSide: BorderSide.none,
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.r),
+                              borderSide: BorderSide(color: AppColors.primary),
                             ),
                           ),
                           value: _selectedCountryCode,
@@ -347,12 +355,12 @@ class _RegisterViewState extends State<RegisterView> {
                                 child: FittedBox(
                                   child: Text(
                                     country['display']!.tr,
-                                    style: TextStyle(
-                                      color: country['code'] ==
-                                              _selectedCountryCode
-                                          ? AppColors.primary
-                                          : Colors.white,
-                                    ),
+                                    // style: TextStyle(
+                                    //   color: country['code'] ==
+                                    //           _selectedCountryCode
+                                    //       ? AppColors.primary
+                                    //       : Colors.white,
+                                    // ),
                                   ),
                                 ),
                               ),

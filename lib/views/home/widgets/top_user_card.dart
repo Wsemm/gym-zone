@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:gym_zones/common/styles/app_colors.dart';
 
 import '../../../common/constants/api.dart';
 import '../../../models/user.dart';
@@ -45,10 +46,28 @@ class TopUserCard extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 4.h),
-                Text(
-                  '${'Points'.tr}: ${user.thisMonthPoints}',
-                  style: TextStyle(fontSize: 14.sp),
-                ),
+
+                Text("🏆"),
+                SizedBox(height: 4.h),
+                Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: '${'Points count'.tr}: ',
+                        style: TextStyle(fontSize: 14.sp),
+                      ),
+                      TextSpan(
+                        text: '${user.thisMonthPoints}',
+                        style: TextStyle(
+                            color: AppColors.primary, fontSize: 14.sp),
+                      ),
+                    ],
+                  ),
+                )
+                // Text(
+                //   '${'Points'.tr}: ${user.thisMonthPoints}',
+                //   style: TextStyle(fontSize: 14.sp),
+                // ),
                 // Add more details as needed
               ],
             ),
