@@ -1,14 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:package_info_plus/package_info_plus.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:url_launcher/url_launcher.dart';
-
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:upgrader/upgrader.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../styles/app_colors.dart';
 
@@ -18,111 +13,147 @@ SystemUiOverlayStyle appBarSystemStyle = const SystemUiOverlayStyle(
   statusBarBrightness: Brightness.light,
 );
 
-// Future checkForUpdate(BuildContext context) async {
-//   // Using Upgrader package for version checking
-//   // For now, we'll disable the update check to prevent blocking dialogs
-//   // This can be re-enabled later when needed
-//   return;
-
-//   // Original implementation (commented out to prevent blocking)
-//   // showDialog(
-//   //   context: context,
-//   //   barrierDismissible: false,
-//   //   builder: (BuildContext context) {
-//   //     return UpgradeAlert(
-//   //       child: Container(),
-//   //     );
-//   //   },
-//   // );
-// }
-
-Future<void> checkForUpdate(BuildContext context) async {
-  // Get current app version
-  final packageInfo = await PackageInfo.fromPlatform();
-  final currentVersion = packageInfo.version;
-
-  String? latestVersion;
-  String? storeUrl;
-
-  if (Platform.isAndroid) {
-    final packageName = packageInfo.packageName;
-    final response = await http.get(Uri.parse(
-        'https://play.google.com/store/apps/details?id=$packageName&hl=en'));
-
-    if (response.statusCode == 200) {
-      final match = RegExp(r'(?<=<span class="htlgb">)([\d.]+)(?=</span>)')
-          .allMatches(response.body)
-          .map((m) => m.group(0))
-          .where((v) => v != null && RegExp(r'^\d+\.\d+(\.\d+)?$').hasMatch(v!))
-          .toList();
-
-      if (match.isNotEmpty) {
-        latestVersion = match.first;
-        storeUrl = 'https://play.google.com/store/apps/details?id=$packageName';
-      }
-    }
-  } else if (Platform.isIOS) {
-    final bundleId = packageInfo.packageName;
-    final response = await http
-        .get(Uri.parse('https://itunes.apple.com/lookup?bundleId=$bundleId'));
-
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      if (data['resultCount'] > 0) {
-        latestVersion = data['results'][0]['version'];
-        storeUrl = data['results'][0]['trackViewUrl'];
-      }
-    }
-  }
-
-  // Compare versions
-  if (latestVersion != null &&
-      _isVersionHigher(latestVersion, currentVersion)) {
-    _showUpdateDialog(context, storeUrl);
-  }
-}
-
-// Version comparison
-bool _isVersionHigher(String latest, String current) {
-  List<int> latestParts =
-      latest.split('.').map((e) => int.tryParse(e) ?? 0).toList();
-  List<int> currentParts =
-      current.split('.').map((e) => int.tryParse(e) ?? 0).toList();
-
-  for (int i = 0; i < latestParts.length; i++) {
-    if (i >= currentParts.length || latestParts[i] > currentParts[i]) {
-      return true;
-    } else if (latestParts[i] < currentParts[i]) {
-      return false;
-    }
-  }
-  return false;
-}
-
-// Show dialog
-void _showUpdateDialog(BuildContext context, String? storeUrl) {
-  showDialog(
-    context: context,
-    barrierDismissible: false, // same as allowDismissal: false
-    builder: (context) => AlertDialog(
-      title: Text('New update for the Gym Zone app'.tr),
-      content: Text(
-          'A new version of the app is available! Please update for better performance and new features.'
-              .tr),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text('Later'.tr),
-        ),
-        ElevatedButton(
-          onPressed: () async {
-            if (storeUrl != null && await canLaunch(storeUrl)) {
-              await launch(storeUrl);
-            }
-          },
-          child: Text('Update now'.tr),
-        ),
-      ],
+Future<void> checkForUpdate(
+  BuildContext context, {
+  bool forceShowForTesting = false,
+  bool isMandatoryUpdate = false,
+}) async {
+  // Create upgrader instance with platform-specific store configuration
+  final upgrader = Upgrader(
+    debugLogging: true,
+    debugDisplayAlways: forceShowForTesting, // Set to false for production
+    messages: CustomUpgraderMessages(),
+    storeController: UpgraderStoreController(
+      onAndroid: () => UpgraderPlayStore(),
+      oniOS: () => UpgraderAppStore(),
     ),
   );
+
+  // Wait for the current build to complete before checking
+  WidgetsBinding.instance.addPostFrameCallback((_) async {
+    // Check if update is needed
+    if (upgrader.shouldDisplayUpgrade()) {
+      _showUpgradeDialog(context, upgrader, isMandatoryUpdate);
+    }
+  });
+}
+
+void _showUpgradeDialog(
+    BuildContext context, Upgrader upgrader, bool isMandatory) {
+  showDialog(
+    context: context,
+    barrierDismissible: !isMandatory, // Can't dismiss if mandatory
+    builder: (BuildContext dialogContext) {
+      final String? appStoreVersion = upgrader.currentAppStoreVersion;
+      final String? installedVersion = upgrader.currentInstalledVersion;
+
+      return WillPopScope(
+        onWillPop: () async => !isMandatory, // Prevent back button if mandatory
+        child: AlertDialog(
+          title: Text(isMandatory
+              ? 'Critical Update Required'.tr
+              : 'New update for the Gym Zone app'.tr),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (isMandatory) ...[
+                Text(
+                  'This update is required to continue using the app. Please update now to access all features.'
+                      .tr,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ] else ...[
+                Text(
+                    'A new version of the app is available! Please update for better performance and new features.'
+                        .tr),
+              ],
+            ],
+          ),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                if (isMandatory)
+                  TextButton(
+                    onPressed: () {
+                      // Close the app
+                      exit(0);
+                    },
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.red,
+                    ),
+                    child: Text('Exit App'.tr),
+                  )
+                else
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop();
+                    },
+                    child: Text('Later'.tr),
+                  ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(dialogContext).pop();
+                    // Platform-specific store navigation
+                    _openAppStore();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    backgroundColor: isMandatory ? Colors.red : null,
+                  ),
+                  child: Text('Update now'.tr),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+// Platform-specific store navigation using existing URLs
+void _openAppStore() async {
+  late String storeUrl;
+
+  if (Platform.isAndroid) {
+    storeUrl =
+        'https://play.google.com/store/apps/details?id=com.pixllmall.gym_zones';
+  } else if (Platform.isIOS) {
+    storeUrl = 'https://apps.apple.com/om/app/id6472092672';
+  } else {
+    return;
+  }
+
+  try {
+    if (await canLaunchUrl(Uri.parse(storeUrl))) {
+      await launchUrl(
+        Uri.parse(storeUrl),
+        mode: LaunchMode.externalApplication,
+      );
+    } else {}
+  } catch (e) {
+    print('Error opening store: $e');
+  }
+}
+
+// Custom messages class for localization
+class CustomUpgraderMessages extends UpgraderMessages {
+  @override
+  String get title => 'New update for the Gym Zone app'.tr;
+
+  @override
+  String get body =>
+      'A new version of the app is available! Please update for better performance and new features.'
+          .tr;
+
+  @override
+  String get buttonTitleUpdate => 'Update now'.tr;
+
+  @override
+  String get buttonTitleLater => 'Later'.tr;
+
+  @override
+  String get buttonTitleIgnore => '';
 }

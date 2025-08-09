@@ -337,6 +337,11 @@ class AppTranslations extends Translations {
           "Please Sign In using email and password":
               "يرجى تسجيل الدخول باستخدام البريد الإلكتروني وكلمة المرور",
           "Error Account Already Exists": "الحساب موجود بالفعل",
+          "Critical Update Required": "تحديث إجباري مطلوب",
+          "This update is required to continue using the app. Please update now to access all features.":
+              "هذا التحديث مطلوب لاستمرار استخدام التطبيق. يرجى التحديث الآن للوصول إلى جميع الميزات.",
+          "Update Now (Required)": "تحديث الآن (إجباري)",
+          "Exit App": "خروج",
         },
       };
 }
