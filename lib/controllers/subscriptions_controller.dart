@@ -99,6 +99,7 @@ class SubscriptionsController extends GetxController {
 
     // subscribe individual api
     if (isIndividual) {
+      print("indivdual gym gymId : $gymId");
       response = await http.post(
         Uri.parse('${Api.API_URL}subscribe-individual'),
         body: {
@@ -120,6 +121,7 @@ class SubscriptionsController extends GetxController {
           'user_id': _user!.id,
           'subscription_plan_id': planId.toString(),
           'total_amount': totalAmountLast.toString(),
+          'gym_id': "0613c0b1-2183-4ef8-92f0-c6cfcc268ca1",
         },
         headers: {
           'Accept': 'application/json',

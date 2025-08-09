@@ -67,16 +67,19 @@ class SubscriptionsView extends StatelessWidget {
                           plan: plan,
                           btnClick: () {
                             if (GetStorage().read('token') != null) {
-                              showGiftDialog(
-                                context: context,
-                                gift: () =>
-                                    Get.toNamed(AppRoutes.giftSubscription),
-                                subscribe: () {
-                                  ctrl.totalAmount.value = plan.amount;
-                                  Get.toNamed(AppRoutes.cartPage,
-                                      arguments: {"item": plan});
-                                },
-                              );
+                              ctrl.totalAmount.value = plan.amount;
+                              Get.toNamed(AppRoutes.cartPage,
+                                  arguments: {"item": plan});
+                              // showGiftDialog(
+                              //   context: context,
+                              //   gift: () =>
+                              //       Get.toNamed(AppRoutes.giftSubscription),
+                              //   subscribe: () {
+                              //     ctrl.totalAmount.value = plan.amount;
+                              //     Get.toNamed(AppRoutes.cartPage,
+                              //         arguments: {"item": plan});
+                              //   },
+                              // );
                             } else {
                               Get.toNamed(AppRoutes.login);
                             }

@@ -395,6 +395,7 @@ class IndividualGymDetailsScreen
                             ),
                           ),
                         ),
+
                       SizedBox(
                         height: 15.h,
                       ),

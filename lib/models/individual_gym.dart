@@ -359,9 +359,17 @@ class Schedules {
     dayOfWeek = json["day_of_week"];
     dayOfWeekAr = json["day_of_week_ar"];
 
-    startTime = json["start_time"] == null
-        ? null
-        : (json["start_time"] as List).map((e) => e.toString()).toList();
+    try {
+      startTime = json["start_time"] == null
+          ? null
+          : (json["start_time"] as List).map((e) => e.toString()).toList();
+    } catch (e) {
+      startTime = json["start_time"] == null
+          ? null
+          : (jsonDecode(json["start_time"]) as List)
+              .map((e) => e.toString())
+              .toList();
+    }
 
     isRecurring = json["is_recurring"];
     createdAt = json["created_at"];

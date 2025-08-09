@@ -294,7 +294,7 @@ class CartScreen extends GetView<SubscriptionsController> {
                     final response = await ctrl.subscribe(
                         planId: subscriptionId,
                         isIndividual: isIndividual,
-                        gymId: itemIndividual?.id.toString());
+                        gymId: itemIndividual?.gymId.toString());
 
                     if (response == SubscriptionStatus.alreadySubscribed) {
                       Get.back();

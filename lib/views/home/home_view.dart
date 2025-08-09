@@ -9,6 +9,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:gym_zones/common/constants/app_images.dart';
 import 'package:gym_zones/common/constants/constants.dart';
 import 'package:gym_zones/common/constants/my_enum.dart';
+import 'package:gym_zones/controllers/auth_controller.dart';
 import 'package:gym_zones/views/home/widgets/ad_card.dart';
 import 'package:gym_zones/views/home/widgets/free_week_card.dart';
 import 'package:gym_zones/views/home/widgets/gym_card_individual.dart';
@@ -208,7 +209,8 @@ class HomeView extends StatelessWidget {
                           children: [
                             // InkWell(
                             //     onTap: () {
-                            //       GetStorage().erase();
+                            //       print("${ctrl.user!.hasSubscription}");
+                            //       print("token ${ctrl.user!.id}");
                             //     },
                             //     child: Text("Clear")),
                             SizedBox(
@@ -312,16 +314,15 @@ class HomeView extends StatelessWidget {
                                                 activeIndex:
                                                     ctrl.analyticsIndex.value,
                                                 count: ctrl.user!
-                                                                .hasSubscription &&
-                                                            ctrl.user!
-                                                                    .subscriptionType ==
+                                                            .hasSubscription &&
+                                                        (ctrl.user!.subscriptionType ==
                                                                 SubscriptionType
                                                                     .individual
                                                                     .name ||
-                                                        ctrl.user!
-                                                                .subscriptionType ==
-                                                            SubscriptionType
-                                                                .both.name
+                                                            ctrl.user!
+                                                                    .subscriptionType ==
+                                                                SubscriptionType
+                                                                    .both.name)
                                                     ? 2
                                                     : 1,
                                                 effect: ExpandingDotsEffect(

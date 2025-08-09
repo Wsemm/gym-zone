@@ -23,6 +23,7 @@ class IndividualSubscriptionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Get.lazyPut(() => SubscriptionsController());
     User user = User.fromJson(GetStorage().read('user'));
     bool hasSubsribe =
         user.subscriptionType == SubscriptionType.individual.name ||
