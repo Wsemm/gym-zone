@@ -38,7 +38,7 @@ class FreeWeekCard extends StatelessWidget {
                 ),
               ),
               Expanded(
-                flex: 6,
+                flex: 7,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -46,11 +46,15 @@ class FreeWeekCard extends StatelessWidget {
                       "Your First Week is Free!".tr,
                       style: TextStyle(
                           color: Colors.white,
-                          fontSize: 16.sp,
+                          fontSize:
+                              GetStorage().read('lang') == 'en' ? 14.sp : 16.sp,
                           fontWeight: FontWeight.w700),
                     ),
                     Container(
-                      constraints: BoxConstraints(maxWidth: 150.w),
+                      constraints: BoxConstraints(
+                          maxWidth: GetStorage().read("lang") == "end"
+                              ? 155.w
+                              : 150.w),
                       child: Text(
                         "Try any gym for free once during your first 7 days of registration."
                             .tr,
@@ -65,7 +69,7 @@ class FreeWeekCard extends StatelessWidget {
                 ),
               ),
               Expanded(
-                flex: 2,
+                flex: 3,
                 child: Image.asset(
                   AppImages.offerDumbbell,
                   width: 108.w,
@@ -91,7 +95,7 @@ class FreeWeekCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10.r),
               ),
               child: Text(
-                "Global Gyms".tr,
+                "Group Gyms".tr,
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: 12.sp,

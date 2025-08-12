@@ -1,21 +1,10 @@
-import 'dart:developer';
-
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:gym_zones/common/widgets/rebi_image.dart';
-import 'package:gym_zones/controllers/home_controller.dart';
-import 'package:gym_zones/controllers/subscriptions_controller.dart';
 import 'package:gym_zones/models/individual_gym.dart';
-import 'package:gym_zones/views/home/Individual_gym_details_screen.dart';
-import 'package:gym_zones/views/home/gym_details_screen.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../common/constants/api.dart';
-import '../../../models/gym.dart';
 import '../../../common/navigation/app_routes.dart';
 import '../../../common/styles/app_colors.dart';
 

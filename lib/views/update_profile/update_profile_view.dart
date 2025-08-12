@@ -216,8 +216,18 @@ class UpdateProfileView extends GetView<UpdateProfileController> {
                         spacing: 5.h,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            "First name".tr,
+                          Row(
+                            children: [
+                              Text(
+                                "First name".tr,
+                              ),
+                              if (controller.isGoogle || controller.isApple)
+                                Text(
+                                  "  *".tr,
+                                  style: TextStyle(
+                                      color: Colors.red, fontSize: 20),
+                                )
+                            ],
                           ),
                           CustomTextFormFieldProfile(
                               validator: AppValidator.validator(
@@ -234,7 +244,17 @@ class UpdateProfileView extends GetView<UpdateProfileController> {
                         spacing: 5.h,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("Last name".tr),
+                          Row(
+                            children: [
+                              Text("Last name".tr),
+                              if (controller.isGoogle || controller.isApple)
+                                Text(
+                                  "  *".tr,
+                                  style: TextStyle(
+                                      color: Colors.red, fontSize: 20),
+                                )
+                            ],
+                          ),
                           CustomTextFormFieldProfile(
                               validator: AppValidator.validator(
                                 type: ValidationType.name,
@@ -257,12 +277,22 @@ class UpdateProfileView extends GetView<UpdateProfileController> {
                 //   textColor: Colors.grey.shade600,
                 // ),
                 SizedBox(height: 16.h),
+                Row(
+                  children: [
+                    Text("Phone number".tr),
+                    if (controller.isGoogle || controller.isApple)
+                      Text(
+                        "  *".tr,
+                        style: TextStyle(color: Colors.red, fontSize: 20),
+                      )
+                  ],
+                ),
                 TextFormField(
                   validator: (controller.isGoogle || controller.isApple)
-                      ? null
-                      : AppValidator.validator(
+                      ? AppValidator.validator(
                           type: ValidationType.phoneNumber,
-                        ),
+                        )
+                      : null,
                   controller: controller.phoneNumberController,
                   focusNode: _phoneNumberFocusNode,
                   decoration: InputDecoration(
@@ -270,7 +300,7 @@ class UpdateProfileView extends GetView<UpdateProfileController> {
                       borderSide: BorderSide(color: AppColors.primary),
                       borderRadius: BorderRadius.circular(8.r),
                     ),
-                    labelText: 'Phone number'.tr,
+                    // labelText: ''.tr,
                     prefix: DropdownButtonFormField<String>(
                       onTap: () => _phoneNumberFocusNode.requestFocus(),
                       decoration: InputDecoration(
@@ -308,6 +338,22 @@ class UpdateProfileView extends GetView<UpdateProfileController> {
                     ),
                   ),
                 ),
+
+                if (controller.isGoogle || controller.isApple) ...[
+                  SizedBox(height: 16.h),
+                  TextFormField(
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: AppColors.primary),
+                        borderRadius: BorderRadius.circular(8.r),
+                      ),
+                      labelText: "Email".tr,
+                      hintText: controller.socialEmail,
+                    ),
+                  )
+                ],
                 // SizedBox(height: 16.h),
                 // Text("Email".tr),
                 // CustomTextFormFieldProfile(
@@ -338,7 +384,16 @@ class UpdateProfileView extends GetView<UpdateProfileController> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Gender".tr),
+                      Row(
+                        children: [
+                          Text("Gender".tr),
+                          if (controller.isGoogle || controller.isApple)
+                            Text(
+                              "  *".tr,
+                              style: TextStyle(color: Colors.red, fontSize: 20),
+                            )
+                        ],
+                      ),
                       SizedBox(height: 8.h),
                       GetBuilder<UpdateProfileController>(
                         builder: (_) => DropdownButtonFormField<String>(

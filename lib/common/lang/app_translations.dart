@@ -27,9 +27,9 @@ class AppTranslations extends Translations {
           'Subscriptions': 'الاشتراكات',
           'Visits': 'الزيارات',
           'Settings': 'الإعدادات',
-          'Welcome to Gym Zones 👋': 'مرحبا بك في Gym Zones 👋',
-          'Get Started!': 'ابدأ الآن!',
-          'Hi,': 'مرحبا،',
+          'Welcome to Gym Zones': 'اهلا بك في تطبيق جيم زون',
+          'Get Started': 'إبدأ الآن',
+          'Hello': 'اهلا بك',
           'NOTE: Make sure to update your profile picture, so that the gym staff can identify you easily.':
               'ملاحظة: تأكد من تحديث صورة ملفك الشخصي، حتى يتمكن موظفو الصالة الرياضية من التعرف عليك بسهولة.',
           'Points in': 'نقاط',
@@ -65,7 +65,7 @@ class AppTranslations extends Translations {
           'Enjoy unlimited access with our subscription plans!':
               'استمتع بوصول غير محدود مع خطط الاشتراك لدينا!',
           'Save': 'وفر',
-          'Subscribe Now': 'اشترك الآن',
+          'Subscribe Now': 'إشترك الآن',
           'Your subscription has been activated successfully':
               'تم تنشيط اشتراكك بنجاح',
           'Cancelled': 'تم الإلغاء',
@@ -268,7 +268,7 @@ class AppTranslations extends Translations {
           'Select governorate': 'اختر المحافظة',
           'No gyms found in the selected governorate for your gender!':
               'لا توجد صالات رياضية مناسبة لجنسك في المحافظة المحددة!',
-          'Group gyms': 'الصالات الجماعية',
+          'Group Gyms': 'الصالات الجماعية',
           'Subscription Plans': 'باقات الاشتراك',
           'Group Subscription': 'الإشتراك الجماعي',
           'Individual subscription': 'الإشتراك الفردي',
@@ -285,8 +285,8 @@ class AppTranslations extends Translations {
               'صلاحية دخول لجميع الصالات ضمن النظام الجماعي.',
           'Choose one gym and join it directly.':
               'اختر صالة واحدة واشترك بها بشكل مباشر.',
-          'You can join multiple gyms at once.':
-              'يمكنك الاشتراك في أكثر من صالة في نفس الوقت.',
+          'Unlimited access to individual gyms.':
+              'الدخول غير المحدود للصالات الفردية',
           "View more": "عرض المزيد",
           "Account created successfully": "تم إنشاء الحساب بنجاح",
           "Ahmad": "أحمد",
@@ -342,6 +342,15 @@ class AppTranslations extends Translations {
               "هذا التحديث مطلوب لاستمرار استخدام التطبيق. يرجى التحديث الآن للوصول إلى جميع الميزات.",
           "Update Now (Required)": "تحديث الآن (إجباري)",
           "Exit App": "خروج",
+          "Not allowed": "غير مسموح",
+          "You are already subscribed!": "لقد قمت بالفعل بالاشتراك",
+          "Top ten athletes": "افضل عشر رياضين",
+          "Class times start from:": "مواعيد الحصص تبدأ من:",
+          "You didn't choose your training plan yet":
+              "لم تختار باقتك التدريبية بعد",
+          "We have the perfect plan for you, start now and unleash your energy.":
+              "لدينا الباقة المثالية لك, إبدأ الأن و أطلق العنان لطاقتك.",
+          "Search for gym": "ابحث عن صالة",
         },
       };
 }

@@ -15,6 +15,9 @@ class AppImages {
   static const String filter = '${rootImages}filter.png';
   static const String adImage = '${rootImages}ADs.png';
   static const String successPayment = '${rootImages}success_payment.png';
+  static const String dateIconPng = '${rootImages}date_icon.png';
+  static const String noSubscripeImage = '${rootImages}no_subscripe_image.png';
+
   //---------------- Svg Assets ----------------
   static const String dateIcon = '${rootSvg}Date-Icon.svg';
 }

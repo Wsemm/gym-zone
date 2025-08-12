@@ -24,10 +24,10 @@ class IndividualSubscriptionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Get.lazyPut(() => SubscriptionsController());
-    User user = User.fromJson(GetStorage().read('user'));
-    bool hasSubsribe =
-        user.subscriptionType == SubscriptionType.individual.name ||
-            user.subscriptionType == SubscriptionType.both.name;
+    // User user = User.fromJson(GetStorage().read('user'));
+    // bool hasSubsribe =
+    //     user.subscriptionType == SubscriptionType.individual.name ||
+    //         user.subscriptionType == SubscriptionType.both.name;
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: AppColors.primary),
@@ -45,14 +45,14 @@ class IndividualSubscriptionCard extends StatelessWidget {
                 Text(
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
-                  "${plan.days.toString()} ${"days".tr}",
+                  "${plan.title.toString()}",
                   style: TextStyle(
                     fontSize: 16.sp,
                   ),
                 ),
                 SizedBox(height: 14.h),
                 Text(
-                  '${'OMR'.tr} ${plan.amount}',
+                  '${'OMR'.tr} ${plan.totalPrice}',
                   style: TextStyle(
                     fontSize: 16.sp,
                     color: AppColors.primary,
@@ -79,9 +79,10 @@ class IndividualSubscriptionCard extends StatelessWidget {
               width: double.maxFinite,
               child: ElevatedButton(
                 onPressed: () {
+                  print("===== gym id from subscription card ${plan.gymId}");
                   if (GetStorage().read('token') != null) {
                     Get.find<SubscriptionsController>().totalAmount.value =
-                        double.parse(plan.amount!);
+                        double.parse(plan.totalPrice!.toString());
                     Get.toNamed(AppRoutes.cartPage,
                         arguments: {"item": plan, "isIndividual": true});
 
@@ -112,7 +113,9 @@ class IndividualSubscriptionCard extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  hasSubsribe ? 'Gift 🎁'.tr : 'Subscribe Now'.tr,
+                  // hasSubsribe ? 'Gift 🎁'.tr : 'Subscribe Now'.tr,
+                  'Subscribe Now'.tr,
+
                   style: TextStyle(fontSize: 16.sp),
                 ),
               ),

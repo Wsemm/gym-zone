@@ -270,8 +270,13 @@ class Location {
   Location({this.lat, this.lng});
 
   Location.fromJson(Map<String, dynamic> json) {
-    lat = json["lat"];
-    lng = json["lng"];
+    try {
+      lat = json["lat"];
+      lng = json["lng"];
+    } catch (e) {
+      lat = double.parse(json["lat"].toString());
+      lng = double.parse(json["lng"].toString());
+    }
   }
 
   static List<Location> fromList(List<Map<String, dynamic>> list) {
@@ -336,8 +341,9 @@ class Schedules {
   String? gymId;
   String? dayOfWeek;
   String? dayOfWeekAr;
-
   List<String>? startTime;
+  List<String>? daysNames;
+  List<String>? daysNamesAr;
   bool? isRecurring;
   String? createdAt;
   String? updatedAt;
@@ -351,6 +357,8 @@ class Schedules {
     this.isRecurring,
     this.createdAt,
     this.updatedAt,
+    this.daysNames,
+    this.daysNamesAr,
   });
 
   Schedules.fromJson(Map<String, dynamic> json) {
@@ -370,6 +378,13 @@ class Schedules {
               .map((e) => e.toString())
               .toList();
     }
+
+    daysNames = json["days_names"] == null
+        ? null
+        : (json["days_names"] as List).map((e) => e.toString()).toList();
+    daysNamesAr = json["days_names_ar"] == null
+        ? null
+        : (json["days_names_ar"] as List).map((e) => e.toString()).toList();
 
     isRecurring = json["is_recurring"];
     createdAt = json["created_at"];

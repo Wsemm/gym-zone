@@ -107,9 +107,9 @@ class UpdateProfileController extends GetxController {
       _phoneNumberController.text = _user.phoneNumber;
       _selectedCountryCode = _user.countryCode;
       _emailController.text = _user.email;
-      _weightController.text = _user.weight.toString();
-      _heightController.text = _user.height.toString();
-      _ageController.text = _user.age.toString();
+      _weightController.text = _user.weight ?? "";
+      _heightController.text = _user.height ?? "";
+      _ageController.text = _user.age ?? "";
       if (_user.bio != null) {
         _bioController.text = _user.bio!;
       }
@@ -177,20 +177,6 @@ class UpdateProfileController extends GetxController {
             Get.offAllNamed(AppRoutes.home);
             return ResponseCode.success;
           } else {
-            print("Registration failed, trying login...");
-            final loginOk = await authController.login(
-              emailToUse,
-              "hanyhany",
-              "1",
-            );
-            print("Login result: $loginOk");
-
-            if (loginOk) {
-              print("Login successful, navigating to home...");
-              Get.offAllNamed(AppRoutes.home);
-              return ResponseCode.success;
-            }
-            print("Both registration and login failed");
             return ResponseCode.systemErorr;
           }
         } catch (e) {

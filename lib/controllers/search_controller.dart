@@ -10,12 +10,43 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import '../common/constants/api.dart';
 import '../models/governorate.dart';
 import '../models/gym.dart';
+import '../models/individual_gym.dart' as individual;
 import 'auth_controller.dart';
 
-class SearchController extends GetxController {
-  PagingController<int, Gym>? pagingController;
+// Create a unified search result class
+class SearchResult {
+  final Gym? gym;
+  final individual.IndividualGym? individualGym;
+  final bool isGroup;
 
-  final RxList<Gym> searchResults = <Gym>[].obs;
+  SearchResult.fromGym(this.gym)
+      : individualGym = null,
+        isGroup = true;
+  SearchResult.fromIndividualGym(this.individualGym)
+      : gym = null,
+        isGroup = false;
+
+  // Helper getters for common properties
+  String get id => isGroup ? gym!.id : individualGym!.id ?? '';
+  String get name => isGroup ? gym!.name : individualGym!.name ?? '';
+  String get nameAr => isGroup ? gym!.nameAr : individualGym!.nameAr ?? '';
+  String get logoPath =>
+      isGroup ? gym!.logoPath : individualGym!.logoPath ?? '';
+
+  // Additional helper methods
+  String get displayName {
+    final currentName = Get.locale?.languageCode == 'en' ? name : nameAr;
+    return currentName.isNotEmpty ? currentName : name;
+  }
+
+  // Check if the search result has valid data
+  bool get isValid => isGroup ? gym != null : individualGym != null;
+}
+
+class SearchController extends GetxController {
+  PagingController<int, SearchResult>? pagingController;
+
+  final RxList<SearchResult> searchResults = <SearchResult>[].obs;
 
   final _keywordsController = TextEditingController();
   TextEditingController get keywordsController => _keywordsController;
@@ -28,6 +59,7 @@ class SearchController extends GetxController {
   void onInit() {
     super.onInit();
     _fetchGovernoratesWithProvinces();
+    performNewSearchOperation();
   }
 
   List<Governorate>? _governorates;
@@ -61,7 +93,8 @@ class SearchController extends GetxController {
   }
 
   void _searchGyms({int pageKey = 1}) async {
-    final url = Uri.parse('${Api.API_URL}gyms/search');
+    final groupUrl = Uri.parse('${Api.API_URL}gyms/search');
+    final individualUrl = Uri.parse('${Api.API_URL}gyms/search');
 
     Map<String, String> queryParams = {};
 
@@ -83,32 +116,67 @@ class SearchController extends GetxController {
     queryParams['show_mixed_gyms'] = showMixedGyms.value ? '1' : '0';
     queryParams['page'] = pageKey.toString();
 
-    final response = await http.get(
-      url.replace(queryParameters: queryParams),
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': 'Bearer ${Get.find<AuthController>().token}',
-      },
-    );
+    final List<SearchResult> combinedResults = [];
 
-    if (response.statusCode == 200) {
-      final gyms = <Gym>[];
-      final decodedJson = jsonDecode(response.body);
-      decodedJson['data'].forEach((e) {
-        gyms.add(Gym.fromJson(e));
-      });
+    try {
+      // Search for group gyms
+      final groupParams = Map<String, String>.from(queryParams);
+      groupParams['gym_type'] = 'group';
 
-      final isLastPage = gyms.length < 20;
-      if (isLastPage) {
-        pagingController!.appendLastPage(gyms);
-      } else {
-        final nextPageKey = pageKey + 1;
-        pagingController!.appendPage(gyms, nextPageKey);
+      final groupResponse = await http.get(
+        groupUrl.replace(queryParameters: groupParams),
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ${Get.find<AuthController>().token}',
+        },
+      );
+
+      if (groupResponse.statusCode == 200) {
+        final groupDecodedJson = jsonDecode(groupResponse.body);
+        final groupData = groupDecodedJson is List
+            ? groupDecodedJson
+            : groupDecodedJson['data'] ?? [];
+        for (var gymData in groupData) {
+          combinedResults.add(SearchResult.fromGym(Gym.fromJson(gymData)));
+        }
       }
 
-      searchResults.addAll(gyms);
-    } else {
+      // Search for individual gyms
+      final individualParams = Map<String, String>.from(queryParams);
+      individualParams['gym_type'] = 'individual';
+
+      final individualResponse = await http.get(
+        individualUrl.replace(queryParameters: individualParams),
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ${Get.find<AuthController>().token}',
+        },
+      );
+
+      if (individualResponse.statusCode == 200) {
+        final individualDecodedJson = jsonDecode(individualResponse.body);
+        final individualData = individualDecodedJson is List
+            ? individualDecodedJson
+            : individualDecodedJson['data'] ?? [];
+        for (var gymData in individualData) {
+          combinedResults.add(SearchResult.fromIndividualGym(
+              individual.IndividualGym.fromJson(gymData)));
+        }
+      }
+
+      // Handle pagination
+      final isLastPage = combinedResults.length < 20;
+      if (isLastPage) {
+        pagingController!.appendLastPage(combinedResults);
+      } else {
+        final nextPageKey = pageKey + 1;
+        pagingController!.appendPage(combinedResults, nextPageKey);
+      }
+
+      searchResults.addAll(combinedResults);
+    } catch (e) {
       // Handle error
+      pagingController!.error = e;
     }
   }
 

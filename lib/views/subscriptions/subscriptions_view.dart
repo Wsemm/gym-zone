@@ -95,6 +95,7 @@ class SubscriptionsView extends StatelessWidget {
                         );
                       },
                     ),
+                    SizedBox(height: 46.h),
                     GetBuilder<HomeController>(
                       builder: (homeCtrl) => Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,7 +104,7 @@ class SubscriptionsView extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'Group gyms'.tr,
+                                'Group Gyms'.tr,
                                 textAlign: TextAlign.start,
                                 style: TextStyle(
                                   fontSize: 16.sp,

@@ -12,6 +12,7 @@ class Gym {
   final List<String>? gallery;
   final String? description;
   final String? descriptionAr;
+  final String? gymType;
 
   Gym({
     required this.id,
@@ -25,6 +26,7 @@ class Gym {
     this.gallery,
     this.description,
     this.descriptionAr,
+    this.gymType,
   });
 
   factory Gym.fromJson(Map<String, dynamic> json) {
@@ -39,7 +41,11 @@ class Gym {
       description: json['description'],
       descriptionAr: json['description_ar'],
       logoPath: json['logo_path'],
-      gallery: json['gallery'] == null ? null : List<String>.from(json['gallery'].map((image) => image['image_path'])),
+      gallery: json['gallery'] == null
+          ? null
+          : List<String>.from(
+              json['gallery'].map((image) => image['image_path'])),
+      gymType: json['gym_type'],
     );
   }
 }

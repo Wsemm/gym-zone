@@ -140,13 +140,16 @@ class AuthController extends GetxController {
           }
           if (userEmail != null) {
             if (isEmailRegistered == true) {
+              log("logging on ");
               var result = await login(userEmail, "hanyhany", "1");
               if (result) {
                 Get.find<CustomBottomNavBarController>().changePage(0);
                 Get.offAllNamed(AppRoutes.home);
               }
             } else if (isEmailRegistered == false) {
-              Get.offAllNamed(
+              log("registering");
+
+              Get.toNamed(
                 AppRoutes.updateProfile,
                 arguments: {
                   "email": userEmail,
@@ -328,7 +331,9 @@ class AuthController extends GetxController {
         },
       ).timeout(Duration(seconds: 30));
 
+      log("register response request${response.request}");
       log("register response body${response.body}");
+      log("register response phone${phone}");
 
       if (response.statusCode == 201) {
         final responseBodyDecoded = jsonDecode(response.body);

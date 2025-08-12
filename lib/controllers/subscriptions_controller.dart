@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:gym_zones/common/navigation/app_routes.dart';
 import 'package:gym_zones/controllers/custom_bottom_nav_bar_controller.dart';
+import 'package:gym_zones/controllers/home_controller.dart';
 import 'package:http/http.dart' as http;
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -100,13 +101,14 @@ class SubscriptionsController extends GetxController {
     // subscribe individual api
     if (isIndividual) {
       print("indivdual gym gymId : $gymId");
+      print("indivdual gym planId : $planId");
       response = await http.post(
         Uri.parse('${Api.API_URL}subscribe-individual'),
         body: {
           'user_id': _user!.id,
           'subscription_plan_id': planId.toString(),
           // 'total_amount': totalAmountLast.toString(),
-          "subscription_type": "individual",
+          // "subscription_type": "individual",
           "gym_id": gymId
         },
         headers: {
@@ -121,7 +123,8 @@ class SubscriptionsController extends GetxController {
           'user_id': _user!.id,
           'subscription_plan_id': planId.toString(),
           'total_amount': totalAmountLast.toString(),
-          'gym_id': "0613c0b1-2183-4ef8-92f0-c6cfcc268ca1",
+          // 'gym_id': "0613c0b1-2183-4ef8-92f0-c6cfcc268ca1",
+          'gym_id': Get.find<HomeController>().gymsToDisplay!.first.id,
         },
         headers: {
           'Accept': 'application/json',

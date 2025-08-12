@@ -11,8 +11,23 @@ import '../../../controllers/home_controller.dart';
 import '../../../controllers/search_controller.dart' as search_ctrl;
 import 'subscriptions_governorate_dialog.dart';
 
-class SubscriptionsGovernorateDropdown extends StatelessWidget {
+class SubscriptionsGovernorateDropdown extends StatefulWidget {
   const SubscriptionsGovernorateDropdown({super.key});
+
+  @override
+  State<SubscriptionsGovernorateDropdown> createState() =>
+      _SubscriptionsGovernorateDropdownState();
+}
+
+class _SubscriptionsGovernorateDropdownState
+    extends State<SubscriptionsGovernorateDropdown> {
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,51 +35,67 @@ class SubscriptionsGovernorateDropdown extends StatelessWidget {
       builder: (homeCtrl) => GetBuilder<search_ctrl.SearchController>(
         builder: (searchCtrl) => Container(
           width: 0.5.sw,
-          child: InkWell(
-            onTap: () {
-              _showSubscriptionsGovernorateDialog(
-                  context, homeCtrl, searchCtrl);
-            },
-            child: Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: 10.w,
-                vertical: 12.h,
-              ),
-              decoration: BoxDecoration(
-                border: Border.all(color: AppColors.primary),
-                borderRadius: BorderRadius.circular(8.r),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.search,
-                    color: Colors.grey,
-                    size: 20.sp,
-                  ),
-                  SizedBox(width: 8.w),
-                  Expanded(
-                    child: Text(
-                      _getDisplayText(homeCtrl, searchCtrl),
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        color: _getDisplayText(homeCtrl, searchCtrl) ==
-                                'Select governorate'.tr
-                            ? Colors.grey
-                            : Colors.black,
-                      ),
+          child: Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: 10.w,
+              vertical: 4.h,
+            ),
+            decoration: BoxDecoration(
+              border: Border.all(color: AppColors.primary),
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+            child: Row(
+              children: [
+                InkWell(
+                  onTap: () => _performSearch(homeCtrl, searchCtrl),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 4.w),
+                    child: Icon(
+                      Icons.search,
+                      color: AppColors.primary,
+                      size: 20.sp,
                     ),
                   ),
-                  VerticalDivider(
-                    color: Colors.red,
+                ),
+                Expanded(
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: 'Search for gym'.tr,
+                      hintStyle: TextStyle(
+                        fontSize: 14.sp,
+                        color: Colors.grey,
+                      ),
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(vertical: 8.h),
+                    ),
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: Colors.black,
+                    ),
                   ),
-                  Image.asset(
-                    AppImages.filter,
-                    color: Colors.grey,
-                    width: 20.sp,
-                    height: 20.sp,
+                ),
+                Container(
+                  width: 1.w,
+                  height: 20.h,
+                  color: Colors.grey.shade300,
+                ),
+                InkWell(
+                  onTap: () {
+                    _showSubscriptionsGovernorateDialog(
+                        context, homeCtrl, searchCtrl);
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 4.w),
+                    child: Image.asset(
+                      AppImages.filter,
+                      color: AppColors.primary,
+                      width: 20.sp,
+                      height: 20.sp,
+                    ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
@@ -72,37 +103,27 @@ class SubscriptionsGovernorateDropdown extends StatelessWidget {
     );
   }
 
-  String _getDisplayText(
+  void _performSearch(
       HomeController homeCtrl, search_ctrl.SearchController searchCtrl) {
-    if (homeCtrl.selectedGovernorate == null) {
-      return 'Select governorate'.tr;
+    final searchQuery = _searchController.text.trim();
+    if (searchQuery.isNotEmpty) {
+      // Set the search keyword in the search controller for API-based search
+      searchCtrl.keywordsController.text = searchQuery;
+
+      // Trigger API search for comprehensive results
+      searchCtrl.performNewSearchOperation();
+
+      // Use the HomeController's search filter for local filtering
+      homeCtrl.filterGymsBySearch(searchQuery);
+
+      log('Searching for gym: $searchQuery');
+    } else {
+      // Clear search if query is empty
+      homeCtrl.filterGymsBySearch(null);
+      // Clear the API search results as well
+      searchCtrl.searchResults.clear();
+      searchCtrl.keywordsController.clear();
     }
-
-    final governorateName = homeCtrl.selectedGovernorate!;
-
-    // Handle "All" selection
-    if (governorateName == 'All') {
-      return 'All Governorates'.tr;
-    }
-
-    final governorateAr = governorate[governorateName] ?? '';
-
-    if (homeCtrl.selectedProvinces.isEmpty) {
-      return GetStorage().read('lang') == 'en'
-          ? '$governorateName ($governorateAr)'
-          : '$governorateAr ($governorateName)';
-    }
-
-    // If provinces are selected, show count
-    final provinceCount = homeCtrl.selectedProvinces.length;
-    final baseText = GetStorage().read('lang') == 'en'
-        // ? '$governorateName ($governorateAr)'
-        // : '$governorateAr ($governorateName)';
-        ? '$governorateName'
-        : '$governorateAr';
-
-    // return '$baseText - $provinceCount ${provinceCount == 1 ? 'province'.tr : 'provinces'.tr}';
-    return '$baseText';
   }
 
   void _showSubscriptionsGovernorateDialog(

@@ -12,6 +12,7 @@ import 'package:http/http.dart' as http;
 
 import '../common/constants/api.dart';
 import '../common/constants/constants.dart';
+import '../common/constants/my_enum.dart';
 import '../common/navigation/app_routes.dart';
 import '../models/gym.dart';
 import '../models/user.dart';
@@ -53,56 +54,115 @@ class HomeController extends GetxController {
   }
 
   void scrollToGroupGyms() {
-    final context = gymsKey.currentContext;
-    if (context != null) {
-      serviceIndex = 1;
-      update();
-      Scrollable.ensureVisible(
-        context,
-        duration: const Duration(milliseconds: 800),
-        curve: Curves.easeInOut,
-      );
-    }
+    serviceIndex = 1;
+    update();
+    _scrollToWidget(gymsKey, _calculateNearestGymsPosition());
   }
 
   void scrollToOffers() {
-    final context = offersKey.currentContext;
-    if (context != null) {
-      serviceIndex = 3;
-      update();
-
-      Scrollable.ensureVisible(
-        context,
-        duration: const Duration(milliseconds: 800),
-        curve: Curves.easeInOut,
-      );
-    }
+    serviceIndex = 3;
+    update();
+    _scrollToWidget(offersKey, _calculateOffersPosition());
   }
 
   void scrollToIndividualGyms() {
-    final context = individualGymsKey.currentContext;
-    if (context != null) {
-      serviceIndex = 2;
-      update();
-      Scrollable.ensureVisible(
-        context,
-        duration: const Duration(milliseconds: 800),
-        curve: Curves.easeInOut,
-      );
-    }
+    serviceIndex = 2;
+    update();
+    _scrollToWidget(individualGymsKey, _calculateIndividualGymsPosition());
   }
 
   void scrollToOurServices() {
-    final context = ourServicesKey.currentContext;
+    serviceIndex = 0;
+    update();
+    _scrollToWidget(ourServicesKey, _calculateOurServicesPosition());
+  }
+
+  // Smart scroll function with context retry and position fallback
+  void _scrollToWidget(GlobalKey key, double fallbackPosition) {
+    final context = key.currentContext;
+
     if (context != null) {
-      serviceIndex = 0;
-      update();
-      Scrollable.ensureVisible(
-        context,
-        duration: const Duration(milliseconds: 800),
-        curve: Curves.easeInOut,
-      );
+      // Context available - use precise scrolling
+      try {
+        Scrollable.ensureVisible(
+          context,
+          duration: const Duration(milliseconds: 800),
+          curve: Curves.easeInOut,
+        );
+        return;
+      } catch (e) {
+        log("Error with ensureVisible: $e");
+      }
     }
+
+    // Context null or error - use position-based fallback
+    log("Context null for key, using fallback position: $fallbackPosition");
+    scrollController.animateTo(
+      fallbackPosition,
+      duration: const Duration(milliseconds: 800),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  // Helper methods to calculate approximate positions
+  double _calculateOurServicesPosition() {
+    // Position right after the floating header
+    return _calculateFirstSliverHeight();
+  }
+
+  double _calculateNearestGymsPosition() {
+    // Our services height + some spacing
+    return _calculateFirstSliverHeight() +
+        200; // Approximate height of OurServicesCard
+  }
+
+  double _calculateIndividualGymsPosition() {
+    // Our services + nearest gyms + spacing
+    double nearestGymsHeight =
+        (nearestGyms?.length ?? 0) * 120.0 + 100; // Estimate gym cards height
+    return _calculateFirstSliverHeight() + 200 + nearestGymsHeight;
+  }
+
+  double _calculateOffersPosition() {
+    // All previous sections + individual gyms
+    double nearestGymsHeight = (nearestGyms?.length ?? 0) * 120.0 + 100;
+    double individualGymsHeight = (individualGyms?.length ?? 0) * 120.0 + 100;
+    return _calculateFirstSliverHeight() +
+        200 +
+        nearestGymsHeight +
+        individualGymsHeight;
+  }
+
+  double _calculateFirstSliverHeight() {
+    // Calculate approximate height of first sliver content
+    double baseHeight = 100; // Search bar and basic spacing
+
+    // Add free week card if shown
+    if (user != null &&
+        user!.subscriptionType == SubscriptionType.trial.name &&
+        user!.subscriptionStatus == SubscriptionStatus.inactive.name) {
+      baseHeight += 100; // FreeWeekCard height
+    }
+
+    // Add statistics card if shown
+    if (user != null &&
+        (user!.hasSubscription ||
+            user!.subscriptionType == SubscriptionType.both.name ||
+            user!.subscriptionType == SubscriptionType.individual.name)) {
+      baseHeight += 150; // Statistics card height
+    }
+
+    // Add ads section if present
+    if (ad.data != null && ad.data!.isNotEmpty) {
+      baseHeight += 200; // Carousel + indicators
+    }
+
+    // Add top users section if present
+    if (topUsers != null && topUsers!.isNotEmpty) {
+      baseHeight += 200; // Top users carousel
+    }
+
+    return baseHeight;
   }
 
   Future initData() async {
@@ -208,6 +268,10 @@ class HomeController extends GetxController {
 
   List<int> get selectedProvinces => _selectedProvinces;
 
+  String? _searchQuery;
+
+  String? get searchQuery => _searchQuery;
+
   void filterGymsByGovernorate(String? governorateName) {
     _selectedGovernorate = governorateName;
     _applyFilters();
@@ -218,20 +282,43 @@ class HomeController extends GetxController {
     _applyFilters();
   }
 
+  void filterGymsBySearch(String? searchQuery) {
+    _searchQuery = searchQuery?.trim();
+    _applyFilters();
+  }
+
   void _applyFilters() {
+    List<Gym>? baseGyms = _nearestGyms;
+    List<IndividualGym>? baseIndividualGyms = _individualGyms;
+
+    // Apply search filter first if there's a search query
+    if (_searchQuery != null && _searchQuery!.isNotEmpty) {
+      baseGyms = baseGyms?.where((gym) {
+        return (gym.name.toLowerCase().contains(_searchQuery!.toLowerCase())) ||
+            (gym.nameAr.toLowerCase().contains(_searchQuery!.toLowerCase()));
+      }).toList();
+
+      baseIndividualGyms = baseIndividualGyms?.where((gym) {
+        return (gym.name?.toLowerCase().contains(_searchQuery!.toLowerCase()) ??
+                false) ||
+            (gym.nameAr?.toLowerCase().contains(_searchQuery!.toLowerCase()) ??
+                false);
+      }).toList();
+    }
+
     if (_selectedGovernorate == null ||
         (_selectedGovernorate?.isEmpty ?? true) ||
         _selectedGovernorate == 'All') {
       // No governorate filter, but check for province filter
       if (_selectedProvinces.isEmpty) {
-        _filteredGyms = null;
-        _filteredIndividualGyms = null;
+        _filteredGyms = baseGyms;
+        _filteredIndividualGyms = baseIndividualGyms;
       } else {
         // Filter by provinces only
-        _filteredGyms = _nearestGyms
+        _filteredGyms = baseGyms
             ?.where((gym) => _selectedProvinces.contains(gym.province.id))
             .toList();
-        _filteredIndividualGyms = _individualGyms
+        _filteredIndividualGyms = baseIndividualGyms
             ?.where((gym) =>
                 gym.province != null &&
                 _selectedProvinces.contains(gym.province?.id))
@@ -239,11 +326,11 @@ class HomeController extends GetxController {
       }
     } else {
       // Filter by governorate first
-      var governorateFilteredGyms = _nearestGyms
+      var governorateFilteredGyms = baseGyms
           ?.where(
               (gym) => gym.province.governorate?.name == _selectedGovernorate)
           .toList();
-      var governorateFilteredIndividualGyms = _individualGyms
+      var governorateFilteredIndividualGyms = baseIndividualGyms
           ?.where(
               (gym) => gym.province?.governorate?.name == _selectedGovernorate)
           .toList();
@@ -263,12 +350,22 @@ class HomeController extends GetxController {
             .toList();
       }
     }
+
+    // If no search query and no other filters, show all gyms
+    if ((_searchQuery == null || _searchQuery!.isEmpty) &&
+        (_selectedGovernorate == null || _selectedGovernorate == 'All') &&
+        _selectedProvinces.isEmpty) {
+      _filteredGyms = null;
+      _filteredIndividualGyms = null;
+    }
+
     update();
   }
 
   void clearFilters() {
     _selectedGovernorate = null;
     _selectedProvinces.clear();
+    _searchQuery = null;
     _filteredGyms = null;
     _filteredIndividualGyms = null;
     update();
@@ -295,7 +392,7 @@ class HomeController extends GetxController {
 
     final response = await http.get(
       Uri.parse(
-          '${Api.API_URL}gyms?gender=${_user != null ? user?.gender : GetStorage().read('gender')}&lat=${position.latitude}&lng=${position.longitude}'),
+          '${Api.API_URL}gyms?gender=${_user != null ? user?.gender : GetStorage().read('gender')}&lat=${position.latitude}&lng=${position.longitude}&gym_type=group'),
       headers: {
         'Accept': 'application/json',
       },

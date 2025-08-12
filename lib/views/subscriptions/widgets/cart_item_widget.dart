@@ -123,19 +123,24 @@ class CartItemWidgetIndividual extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "${item.days} days",
-                    style: TextStyle(
-                      fontSize: 18.sp,
-                      // color: Colors.black,
-                      fontWeight: FontWeight.w700,
+                  Container(
+                    constraints: BoxConstraints(
+                      maxWidth: 220.w,
+                    ),
+                    child: Text(
+                      "${item.title}",
+                      style: TextStyle(
+                        fontSize: 18.sp,
+                        // color: Colors.black,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                   SizedBox(
                     height: 8.h,
                   ),
                   Text(
-                    '${'OMR'.tr} ${item.amount}',
+                    '${'OMR'.tr} ${item.totalPrice}',
                     style: TextStyle(
                       fontSize: 18.sp,
                       // color: Colors.black,

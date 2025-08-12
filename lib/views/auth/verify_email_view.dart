@@ -115,7 +115,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                       Get.find<AuthController>().removeTokenAndUser();
                       Get.offAllNamed(AppRoutes.home);
                     },
-                    child: FittedBox(child: Text('SKIP'.tr)),
+                    child: FittedBox(child: Text('Logout'.tr)),
                   ),
                 ),
               ],

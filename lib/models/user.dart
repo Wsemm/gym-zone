@@ -1,3 +1,5 @@
+import 'package:gym_zones/common/constants/my_enum.dart';
+
 class User {
   final String id;
   final String firstname;
@@ -66,7 +68,7 @@ class User {
       lastname: json['lastname'],
       gender: json['gender'],
       email: json['email'],
-      phoneNumber: json['phone'],
+      phoneNumber: json['phone'] ?? "",
       countryCode: json['country_code'],
       subscribedAt: json['subscribed_at'] == null
           ? null
@@ -144,7 +146,8 @@ class User {
       subscribedAt != null && subscriptionExpiresAt != null;
 
   bool get hasIndividualSubscription =>
-      subscribedAtIndividual != null && subscriptionExpiresAtIndividual != null;
+      subscriptionType == SubscriptionType.individual.name ||
+      subscriptionType == SubscriptionType.both.name;
 
   bool get isSubscriptionExpired =>
       hasSubscription && subscriptionExpiresAt!.isBefore(DateTime.now());

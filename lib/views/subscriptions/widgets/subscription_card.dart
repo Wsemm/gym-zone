@@ -29,9 +29,9 @@ class SubscriptionCard extends StatelessWidget {
               children: [
                 Text(
                   plan.durationText,
-                  style: TextStyle(fontSize: 16.sp, color: AppColors.primary),
+                  style: TextStyle(fontSize: 16.sp, color: AppColors.textGrey),
                 ),
-                SizedBox(height: 32.h),
+                SizedBox(height: 80.h),
                 Text(
                   '${'OMR'.tr} ${plan.amount.toStringAsFixed(3)}',
                   style: TextStyle(
@@ -40,17 +40,17 @@ class SubscriptionCard extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                if (plan.savingPercent != null)
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8.h),
-                    child: Text(
-                      '${'Save'.tr} ${plan.savingPercent}%',
-                      style: TextStyle(
-                        color: AppColors.primary,
-                        fontSize: 18.sp,
-                      ),
-                    ),
-                  ),
+                // if (plan.savingPercent != null)
+                //   Padding(
+                //     padding: EdgeInsets.symmetric(vertical: 8.h),
+                //     child: Text(
+                //       '${'Save'.tr} ${plan.savingPercent}%',
+                //       style: TextStyle(
+                //         color: AppColors.primary,
+                //         fontSize: 18.sp,
+                //       ),
+                //     ),
+                //   ),
               ],
             ),
             SizedBox(

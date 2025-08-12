@@ -6,8 +6,8 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import '../../common/constants/constants.dart';
 import '../../common/styles/app_colors.dart';
 import '../../controllers/search_controller.dart';
-import '../../models/gym.dart';
 import '../home/widgets/gym_card.dart';
+import '../home/widgets/gym_card_individual.dart';
 import 'widgets/search_filters.dart';
 
 class SearchView extends StatelessWidget {
@@ -89,15 +89,28 @@ class SearchView extends StatelessWidget {
                   ctrl.pagingController == null
                       ? const SizedBox()
                       : Expanded(
-                          child: PagedListView<int, Gym>(
+                          child: PagedListView<int, SearchResult>(
                             shrinkWrap: true,
                             padding: EdgeInsets.zero,
                             pagingController: ctrl.pagingController!,
-                            builderDelegate: PagedChildBuilderDelegate<Gym>(
+                            builderDelegate:
+                                PagedChildBuilderDelegate<SearchResult>(
                               transitionDuration:
                                   const Duration(milliseconds: 500),
                               itemBuilder: (context, item, index) {
-                                return GymCard(gym: item);
+                                if (item.isGroup && item.gym != null) {
+                                  return GymCard(gym: item.gym!);
+                                } else if (!item.isGroup &&
+                                    item.individualGym != null) {
+                                  return IndividualGymCard(
+                                      gym: item.individualGym!);
+                                } else {
+                                  // Fallback widget in case of null data
+                                  return Container(
+                                    padding: EdgeInsets.all(16.sp),
+                                    child: Text('Invalid gym data'.tr),
+                                  );
+                                }
                               },
                               newPageProgressIndicatorBuilder: (context) =>
                                   const Center(

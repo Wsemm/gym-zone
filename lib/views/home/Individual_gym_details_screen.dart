@@ -1,23 +1,17 @@
 import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:gym_zones/common/constants/app_images.dart';
-import 'package:gym_zones/common/constants/functions.dart';
 import 'package:gym_zones/common/widgets/loading_widget.dart';
-import 'package:gym_zones/controllers/home_controller.dart';
 import 'package:gym_zones/controllers/individual_gym_details_screen_controller.dart';
 import 'package:gym_zones/models/individual_gym.dart';
 import 'package:gym_zones/views/home/widgets/gym_branch.dart';
 import 'package:gym_zones/views/subscriptions/widgets/individual_subscription_card.dart';
-import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../common/constants/api.dart';
 import '../../common/navigation/app_routes.dart';
@@ -69,7 +63,7 @@ class IndividualGymDetailsScreen
                             onTap: () => Get.back(),
                             child: CircleAvatar(
                               backgroundColor: Colors.white.withOpacity(0.5),
-                              child: Icon(
+                              child: const Icon(
                                 Icons.arrow_back_ios_new,
                                 color: Colors.black,
                               ),
@@ -90,12 +84,18 @@ class IndividualGymDetailsScreen
                                   horizontal: 14.w, vertical: 15.h),
                               child: ClipRRect(
                                   borderRadius: BorderRadius.circular(10.r),
-                                  child: RebiImage(
-                                    imageUrl:
-                                        '${Api.IMAGE_PREFIX}${controller.gym!.logoPath}',
-                                    height: 52.h,
-                                    width: 64.h,
-                                    fit: BoxFit.fill,
+                                  child: InkWell(
+                                    onTap: () {
+                                      print(
+                                          '${Api.IMAGE_PREFIX}${controller.gym!.logoPath}');
+                                    },
+                                    child: RebiImage(
+                                      imageUrl:
+                                          '${Api.IMAGE_PREFIX}${controller.gym!.logoPath}',
+                                      height: 52.h,
+                                      width: 64.h,
+                                      fit: BoxFit.fill,
+                                    ),
                                   )),
                             ),
                           ),
@@ -103,156 +103,6 @@ class IndividualGymDetailsScreen
                       ],
                     ),
                   ),
-
-                ///
-                /// Header :
-                /// 1- Slider of images
-                /// 2- company log
-                ///
-                // SizedBox(
-                //   height: 225.h,
-                //   child: Stack(
-                //     children: [
-                //       Positioned(
-                //         top: 0,
-                //         right: 0,
-                //         left: 0,
-                //         child: SizedBox(
-                //           height: 200.h,
-                //           child: Padding(
-                //             padding: EdgeInsets.symmetric(horizontal: 10.w),
-                //             child: CarouselSlider.builder(
-                //               controller.gym!Count: controller.gym!.gallery!.length,
-                //               controller.gym!Builder: (context, index, realIdx) {
-                //                 WidgetsBinding.instance.addPostFrameCallback(
-                //                     (_) => controller.imageIndex.value = index);
-                //                 return GestureDetector(
-                //                   onTap: () {
-                //                     Get.toNamed(
-                //                       AppRoutes.gymGallery,
-                //                       arguments: {
-                //                         'images': controller.gym!.gallery,
-                //                         'initailImageIndex': index,
-                //                       },
-                //                     );
-                //                   },
-                //                   child: ClipRRect(
-                //                     borderRadius: BorderRadius.circular(10.r),
-                //                     child: RebiImage(
-                //                       imageUrl:
-                //                           '${Api.IMAGE_PREFIX}${controller.gym!.gallery![index]}',
-                //                       fit: BoxFit.fill,
-                //                       width: Get.width,
-                //                       height: 250.h,
-                //                     ),
-                //                   ),
-                //                 );
-                //               },
-                //               options: CarouselOptions(
-                //                 enlargeCenterPage: true,
-                //                 autoPlay: true,
-                //                 padEnds: false,
-                //                 viewportFraction: 1,
-                //               ),
-                //             ),
-                //           ),
-                //         ),
-                //       ),
-
-                //       ///
-                //       ///
-                //       ///
-                //       ///
-
-                //       Obx(
-                //         () => Positioned(
-                //             top: 25.h,
-                //             right: 0,
-                //             left: 0,
-                //             child: SizedBox(
-                //               width: Get.width,
-                //               child: Center(
-                //                 child: AnimatedSmoothIndicator(
-                //                   activeIndex: controller.imageIndex.value,
-                //                   count: controller.gym!.gallery!.length,
-                //                   effect: ExpandingDotsEffect(
-                //                     dotHeight: 6.h,
-                //                     dotWidth: 6.w,
-                //                     spacing: 10.w,
-                //                     dotColor: const Color(0x4C111827),
-                //                     activeDotColor: const Color(0xFF374151),
-                //                     paintStyle: PaintingStyle.fill,
-                //                   ),
-                //                 ),
-                //               ),
-                //             )),
-                //       ),
-
-                //       ///
-                //       /// Back Button icon
-                //       ///
-                //       Positioned(
-                //           top: 25.h,
-                //           left: 10.w,
-                //           child: TextButton(
-                //             child: Container(
-                //               height: 35.w,
-                //               width: 35.w,
-                //               decoration: BoxDecoration(
-                //                   color: Colors.white.withOpacity(0.5),
-                //                   borderRadius: BorderRadius.circular(100.r)),
-                //               child: Center(
-                //                 child: Icon(
-                //                   Icons.arrow_back_ios_new,
-                //                   size: 18.sp,
-                //                 ),
-                //               ),
-                //             ),
-                //             onPressed: () => Navigator.of(context).pop(),
-                //           )),
-
-                //       ///
-                //       /// Company Icon
-                //       ///
-                //       Positioned(
-                //         bottom: 0,
-                //         left: 0,
-                //         right: 0,
-                //         child: Column(
-                //           children: [
-                //             Card(
-                //               elevation: 4,
-                //               shape: RoundedRectangleBorder(
-                //                 borderRadius: BorderRadius.circular(10.r),
-                //               ),
-                //               child: Padding(
-                //                 padding: EdgeInsets.all(5.w),
-                //                 child: ClipRRect(
-                //                     borderRadius: BorderRadius.circular(10.r),
-                //                     child: RebiImage(
-                //                       imageUrl: '${Api.IMAGE_PREFIX}${controller.gym!.logoPath}',
-                //                       height: 52.h,
-                //                       width: 64.h,
-                //                       fit: BoxFit.fill,
-                //                     )),
-                //               ),
-                //             ),
-                //           ],
-                //         ),
-                //       ),
-                //     ],
-                //   ),
-                // ),
-
-                ///
-                /// Title of company
-                ///
-                // InkWell(
-                //   onTap: () {
-                //     print("${controller.gym!.id}");
-                //   },
-                //   child: Text("Dsa"),
-                // ),
                 Container(
                   padding: EdgeInsets.symmetric(
                     horizontal: 16.w,
@@ -356,7 +206,8 @@ class IndividualGymDetailsScreen
 
                       if (controller.isLoading)
                         const LoadingWidget()
-                      else if (controller.plans!.data != null)
+                      else if (controller.plans!.data != null &&
+                          controller.plans!.data!.isNotEmpty)
                         Card(
                           child: Container(
                             padding: EdgeInsets.symmetric(horizontal: 5),
@@ -429,130 +280,119 @@ class IndividualGymDetailsScreen
                       SizedBox(
                         height: 15.h,
                       ),
-                      Card(
-                        child: Container(
-                          padding: const EdgeInsets.all(5),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Weekly class times".tr,
-                                style: TextStyle(
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.w500),
-                              ),
-                              SizedBox(height: 10.h),
-                              GridView.builder(
-                                shrinkWrap: true,
-                                padding: EdgeInsets.zero,
-                                physics: const NeverScrollableScrollPhysics(),
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
-                                  childAspectRatio: 1.5,
-                                  crossAxisSpacing: 25.w,
-                                  mainAxisSpacing: 15.h,
+                      if (controller.gym!.schedules != null &&
+                          controller.gym!.schedules!.isNotEmpty)
+                        Card(
+                          child: Container(
+                            padding: const EdgeInsets.all(5),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Weekly class times".tr,
+                                  style: TextStyle(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w500),
                                 ),
-                                itemCount: controller.gym!.schedules!.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  var scudule =
-                                      controller.gym!.schedules![index];
-                                  return DefaultTextStyle(
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 14.sp,
-                                        color: Color.fromRGBO(37, 37, 37, 1)),
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          spacing: 2.w,
+                                SizedBox(height: 15.h),
+                                GridView.builder(
+                                  shrinkWrap: true,
+                                  padding: EdgeInsets.zero,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                    childAspectRatio:
+                                        GetStorage().read("lang") == "en"
+                                            ? 1.2.w
+                                            : 1.w,
+                                    crossAxisSpacing:
+                                        GetStorage().read("lang") == "en"
+                                            ? 10.w
+                                            : 30.w,
+                                    mainAxisSpacing: 15.h,
+                                  ),
+                                  itemCount: controller.gym!.schedules!.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    var scudule =
+                                        controller.gym!.schedules![index];
+                                    return DefaultTextStyle(
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 14.sp,
+                                          color: Color.fromRGBO(37, 37, 37, 1)),
+                                      child: Container(
+                                        // color: Colors.red,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            SvgPicture.asset(
-                                              AppImages.dateIcon,
-                                              width: 20,
-                                              height: 20,
+                                            Row(
+                                              spacing: 2.w,
+                                              children: [
+                                                Image.asset(
+                                                  AppImages.dateIconPng,
+                                                  width: 20,
+                                                  height: 20,
+                                                  color: AppColors.primary,
+                                                ),
+                                                if (scudule.dayOfWeek != null)
+                                                  Text(
+                                                    "${Get.locale == Locale("en") ? scudule.dayOfWeek : scudule.dayOfWeekAr}",
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        fontSize: 16.sp),
+                                                  )
+                                                else
+                                                  Text(
+                                                    "${Get.locale == Locale("en") ? scudule.daysNames!.map((day) => day).join("- ") : scudule.daysNamesAr!.map((day) => day).join("- ")}",
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        fontSize: 16.sp),
+                                                  )
+                                              ],
                                             ),
-                                            Text(
-                                              "${Get.locale == Locale("en") ? scudule.dayOfWeek : scudule.dayOfWeekAr}",
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 16.sp),
-                                            ),
+                                            SizedBox(height: 7.h),
+                                            Text("Class times start from:".tr),
+                                            SizedBox(height: 5.h),
+                                            Container(
+                                              height: 60.h,
+                                              child: ListView(
+                                                padding: EdgeInsets.zero,
+                                                children: [
+                                                  ...scudule.startTime!.map(
+                                                    (time) => Row(
+                                                      spacing: 5.w,
+                                                      children: [
+                                                        const Icon(
+                                                          Icons
+                                                              .access_time_outlined,
+                                                          color: Colors.grey,
+                                                          size: 20,
+                                                        ),
+                                                        Text(
+                                                          time,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            )
                                           ],
                                         ),
-                                        SizedBox(height: 5.h),
-                                        Container(
-                                          height: 60.h,
-                                          child: ListView(
-                                            padding: EdgeInsets.zero,
-                                            children: [
-                                              ...scudule.startTime!.map(
-                                                (time) => Row(
-                                                  spacing: 5.w,
-                                                  children: [
-                                                    const Icon(
-                                                      Icons
-                                                          .access_time_outlined,
-                                                      color: Colors.grey,
-                                                      size: 20,
-                                                    ),
-                                                    Text(
-                                                      time,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  );
-                                },
-                              ),
-                            ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
 
-                      ///
-                      /// Location Button
-                      ///
-
-                      // SizedBox(
-                      //   width: Get.width,
-                      //   child: Padding(
-                      //     padding: EdgeInsets.symmetric(horizontal: 10.w),
-                      //     child: ElevatedButton.icon(
-                      //       onPressed: () {
-                      //         log("# controller.gym!.locationUrl :${controller.gym!.locationUrl}");
-                      //         launchUrl(
-                      //           Uri.parse(controller.gym!.locationUrl),
-                      //           mode: LaunchMode.externalApplication,
-                      //         );
-                      //       },
-                      //       icon: Icon(
-                      //         Icons.location_on_outlined,
-                      //         color: Colors.white,
-                      //         size: 16.sp,
-                      //       ),
-                      //       label: FittedBox(child: Text('Locate on Maps'.tr)),
-                      //       style: ButtonStyle(
-                      //         padding: WidgetStateProperty.all(
-                      //           EdgeInsets.symmetric(
-                      //             horizontal: 16.w,
-                      //             vertical: 8.h,
-                      //           ),
-                      //         ),
-                      //         shape: WidgetStateProperty.all(
-                      //           RoundedRectangleBorder(
-                      //             borderRadius: BorderRadius.circular(10.r),
-                      //           ),
-                      //         ),
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
                       SizedBox(
                         height: 25.h,
                       ),
@@ -642,29 +482,6 @@ class IndividualGymDetailsScreen
                       SizedBox(
                         height: 10.h,
                       ),
-
-                      // SizedBox(
-                      //   height: 125.h,
-                      //   child: ListView.builder(
-                      //       padding: EdgeInsets.symmetric(horizontal: 10.w),
-                      //       primary: true,
-                      //       shrinkWrap: true,
-                      //       scrollDirection: Axis.horizontal,
-                      //       controller.gym!Count: controller.nearestGyms!.length,
-                      //       controller.gym!Builder: (context, index) {
-                      //         return GymCardSmall(
-                      //             controller.gym!: controller.nearestGyms![index],
-                      //             btnClick: () {
-                      //               Navigator.push(
-                      //                 context,
-                      //                 MaterialPageRoute(
-                      //                     builder: (context) =>
-                      //                         IndividualGymDetailsScreen(
-                      //                             controller.gym!: controller.nearestGyms![index])),
-                      //               );
-                      //             });
-                      //       }),
-                      // ),
                     ],
                   ),
                 )

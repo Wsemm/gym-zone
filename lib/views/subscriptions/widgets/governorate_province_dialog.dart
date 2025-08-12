@@ -305,36 +305,50 @@ class _GovernorateProvinceDialogState extends State<GovernorateProvinceDialog> {
                                                           .contains(
                                                               province.id);
 
-                                                  return CheckboxListTile(
-                                                    title: Text(
-                                                      GetStorage().read(
-                                                                  'lang') ==
-                                                              'en'
-                                                          ? province.name
-                                                          : province.nameAr,
-                                                      style: TextStyle(
-                                                          fontSize: 14.sp),
-                                                    ),
-                                                    value: isSelected,
-                                                    onChanged: (bool? value) {
-                                                      setState(() {
-                                                        if (value == true) {
-                                                          _selectedProvinces
-                                                              .add(province.id);
-                                                        } else {
-                                                          _selectedProvinces
-                                                              .remove(
-                                                                  province.id);
-                                                        }
-                                                      });
-                                                    },
-                                                    controlAffinity:
-                                                        ListTileControlAffinity
-                                                            .leading,
-                                                    contentPadding:
+                                                  return Padding(
+                                                    padding:
                                                         EdgeInsets.symmetric(
-                                                      horizontal: 12.w,
+                                                      // horizontal: 12.w,
                                                       vertical: 4.h,
+                                                    ),
+                                                    child: Row(
+                                                      children: [
+                                                        Checkbox(
+                                                          value: isSelected,
+                                                          onChanged:
+                                                              (bool? value) {
+                                                            setState(() {
+                                                              if (value ==
+                                                                  true) {
+                                                                _selectedProvinces
+                                                                    .add(province
+                                                                        .id);
+                                                              } else {
+                                                                _selectedProvinces
+                                                                    .remove(
+                                                                        province
+                                                                            .id);
+                                                              }
+                                                            });
+                                                          },
+                                                          activeColor:
+                                                              AppColors.primary,
+                                                        ),
+                                                        // SizedBox(width: 8.w),
+                                                        Expanded(
+                                                          child: Text(
+                                                            GetStorage().read(
+                                                                        'lang') ==
+                                                                    'en'
+                                                                ? province.name
+                                                                : province
+                                                                    .nameAr,
+                                                            style: TextStyle(
+                                                                fontSize:
+                                                                    14.sp),
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
                                                   );
                                                 },
