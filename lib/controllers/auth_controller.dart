@@ -61,16 +61,28 @@ class AuthController extends GetxController {
 
   Future<bool> signInWithGoogle() async {
     try {
+      print('Starting Google Sign-In process...');
+       await GoogleSignIn().signOut();
+      print('Signed out from previous sessions');
+      
       final GoogleSignIn googleSignIn = GoogleSignIn(
-        clientId:
-            "960645673283-btmci45o628npba7vnuaabi3v4qg2o57.apps.googleusercontent.com",
         scopes: ['email', 'profile'],
       );
+      
+      print('GoogleSignIn instance created with scopes: ${googleSignIn.scopes}');
 
+      print('Attempting to sign in...');
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      print('Sign-in attempt completed');
 
       if (googleUser == null) {
         print('Google Sign-In was cancelled by user');
+        Get.snackbar(
+          'Cancellation'.tr,
+          'Google sign-in was canceled'.tr,
+          backgroundColor: Colors.orange,
+          colorText: Colors.white,
+        );
         return false;
       }
 
@@ -177,7 +189,7 @@ class AuthController extends GetxController {
     } on firebase_auth.FirebaseAuthException catch (e) {
       print('Firebase Auth Error: ${e.code} - ${e.message}');
       Get.snackbar(
-        'Error'.tr,
+        'Firebase Error'.tr,
         'Firebase authentication failed: ${e.message}'.tr,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -186,7 +198,7 @@ class AuthController extends GetxController {
     } catch (e) {
       print('Unexpected error in Google Sign-In: $e');
       Get.snackbar(
-        'Error'.tr,
+        'Unexpected Error'.tr,
         'An unexpected error occurred. Please try again.'.tr,
         backgroundColor: Colors.red,
         colorText: Colors.white,

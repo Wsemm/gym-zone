@@ -55,22 +55,24 @@
 		<string>This app needs access to camera to scan QR codes for gym check-ins.</string>
 		<key>NSPhotoLibraryUsageDescription</key>
 		<string>This app needs access to photo library to select profile pictures.</string>
+        <key>GIDClientID</key>
+        <string>960645673283-80oev8m1mnvjrs3cuqaeloc7f1hc7jbk.apps.googleusercontent.com</string>
 		<key>CFBundleURLTypes</key>
 		<array>
 			<dict>
 				<key>CFBundleURLName</key>
-				<string>com.pixllmall.gymZones</string>
-				<key>CFBundleURLSchemes</key>
-				<array>
-					<string>com.pixllmall.gymZones</string>
-				</array>
+                        				<string>com.pixllmall.gymZones</string>
+                        				<key>CFBundleURLSchemes</key>
+                        				<array>
+                        					<string>com.pixllmall.gymZones</string>
+                        				</array>
 			</dict>
 			<dict>
 				<key>CFBundleURLName</key>
 				<string>Google Sign-In</string>
 				<key>CFBundleURLSchemes</key>
 				<array>
-					<string>com.googleusercontent.apps.960645673283-btmci45o628npba7vnuaabi3v4qg2o57</string>
+					<string>com.googleusercontent.apps.960645673283-80oev8m1mnvjrs3cuqaeloc7f1hc7jbk</string>
 				</array>
 			</dict>
 		</array>
