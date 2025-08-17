@@ -232,9 +232,9 @@ class AppTranslations extends Translations {
           "Height": "الطول",
           "Health information": "معلومات الصحة",
           "Global Gyms": "الصالات الجماعية",
-          "Your First Week is Free!": "أسبوعك الأول مجانا!",
-          "Try any gym for free once during your first 7 days of registration.":
-              "جرب أي صالة مجانا مرة واحدة خلال أول 7 أيام من تسجيلك في التطبيق .",
+          "Your First Week is Free!": "دخولك الأول مجانا !",
+          "Try any group gym for free once during your first 7 days of registration.":
+              "جرب أي صالة من صالاتنا الجماعية  مجانا مرة واحدة خلال أول 7 أيام من تسجيلك في التطبيق .",
 
           // New validation messages in Arabic
           'Please confirm your password': 'يرجى تأكيد كلمة المرور',
@@ -311,7 +311,7 @@ class AppTranslations extends Translations {
           "Recipient": "المستلم",
           "Gift will be sent to:": "سوف يتم إرسال الهدية إلى:",
           "Confirm Gift Payment": "تأكيد دفع الهدية",
-          "subscription start with": "اشتراك يبدأ من ",
+          "subscription start from": "اشتراك يبدأ من ",
           "days": "أيام",
           "Governorates": "المحافظات",
           "Provinces": "الولايات",
@@ -351,6 +351,11 @@ class AppTranslations extends Translations {
           "We have the perfect plan for you, start now and unleash your energy.":
               "لدينا الباقة المثالية لك, إبدأ الأن و أطلق العنان لطاقتك.",
           "Search for gym": "ابحث عن صالة",
+          "Scan gym Qr": "امسح رمز الصالة",
+          "No gyms available right now": "لا يوجد صالات في الوقت الحالي",
+          "Failed to sign in with Google. Please try again.":
+              "فشل تسجيل الدخول باستخدام جوجل. يرجى المحاولة مرة أخرى.",
+          "No more gyms": "لا يوجد صالات أخرى",
         },
       };
 }

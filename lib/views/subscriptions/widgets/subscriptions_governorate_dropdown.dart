@@ -11,8 +11,13 @@ import '../../../controllers/home_controller.dart';
 import '../../../controllers/search_controller.dart' as search_ctrl;
 import 'subscriptions_governorate_dialog.dart';
 
+enum ScreenType { group, individual }
+
 class SubscriptionsGovernorateDropdown extends StatefulWidget {
-  const SubscriptionsGovernorateDropdown({super.key});
+  final ScreenType screenType;
+
+  const SubscriptionsGovernorateDropdown(
+      {super.key, this.screenType = ScreenType.group});
 
   @override
   State<SubscriptionsGovernorateDropdown> createState() =>
@@ -22,17 +27,36 @@ class SubscriptionsGovernorateDropdown extends StatefulWidget {
 class _SubscriptionsGovernorateDropdownState
     extends State<SubscriptionsGovernorateDropdown> {
   final TextEditingController _searchController = TextEditingController();
+  bool _isDisposed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Clear search field when entering the screen
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _searchController.clear();
+    });
+  }
 
   @override
   void dispose() {
-    _searchController.dispose();
+    if (!_isDisposed) {
+      _searchController.dispose();
+      _isDisposed = true;
+    }
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    // Get the appropriate SearchController based on screen type
+    final String searchTag = widget.screenType == ScreenType.group
+        ? 'group_search'
+        : 'individual_search';
+
     return GetBuilder<HomeController>(
       builder: (homeCtrl) => GetBuilder<search_ctrl.SearchController>(
+        tag: searchTag,
         builder: (searchCtrl) => Container(
           width: 0.5.sw,
           child: Container(
@@ -59,6 +83,14 @@ class _SubscriptionsGovernorateDropdownState
                 ),
                 Expanded(
                   child: TextField(
+                    onChanged: (value) {
+                      if (value.isEmpty) {
+                        _performSearch(homeCtrl, searchCtrl);
+                      }
+                    },
+                    onSubmitted: (value) {
+                      _performSearch(homeCtrl, searchCtrl);
+                    },
                     controller: _searchController,
                     decoration: InputDecoration(
                       hintText: 'Search for gym'.tr,
@@ -105,6 +137,12 @@ class _SubscriptionsGovernorateDropdownState
 
   void _performSearch(
       HomeController homeCtrl, search_ctrl.SearchController searchCtrl) {
+    // Add null safety check
+    if (homeCtrl == null || searchCtrl == null) {
+      log('Controllers are null, skipping search');
+      return;
+    }
+
     final searchQuery = _searchController.text.trim();
     if (searchQuery.isNotEmpty) {
       // Set the search keyword in the search controller for API-based search
@@ -113,13 +151,28 @@ class _SubscriptionsGovernorateDropdownState
       // Trigger API search for comprehensive results
       searchCtrl.performNewSearchOperation();
 
-      // Use the HomeController's search filter for local filtering
-      homeCtrl.filterGymsBySearch(searchQuery);
+      // Use the appropriate filter method based on screen type
+      switch (widget.screenType) {
+        case ScreenType.group:
+          homeCtrl.filterGroupGymsBySearch(searchQuery);
+          break;
+        case ScreenType.individual:
+          homeCtrl.filterIndividualGymsBySearch(searchQuery);
+          break;
+      }
 
-      log('Searching for gym: $searchQuery');
+      log('Searching for gym: $searchQuery on ${widget.screenType} screen');
     } else {
       // Clear search if query is empty
-      homeCtrl.filterGymsBySearch(null);
+      switch (widget.screenType) {
+        case ScreenType.group:
+          homeCtrl.filterGroupGymsBySearch(null);
+          break;
+        case ScreenType.individual:
+          homeCtrl.filterIndividualGymsBySearch(null);
+          break;
+      }
+
       // Clear the API search results as well
       searchCtrl.searchResults.clear();
       searchCtrl.keywordsController.clear();
@@ -131,6 +184,21 @@ class _SubscriptionsGovernorateDropdownState
     HomeController homeCtrl,
     search_ctrl.SearchController searchCtrl,
   ) {
+    // Get screen-specific selected values
+    String? selectedGovernorate;
+    List<int> selectedProvinces;
+
+    switch (widget.screenType) {
+      case ScreenType.group:
+        selectedGovernorate = homeCtrl.selectedGovernorateGroup;
+        selectedProvinces = homeCtrl.selectedProvincesGroup;
+        break;
+      case ScreenType.individual:
+        selectedGovernorate = homeCtrl.selectedGovernorateIndividual;
+        selectedProvinces = homeCtrl.selectedProvincesIndividual;
+        break;
+    }
+
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -139,24 +207,46 @@ class _SubscriptionsGovernorateDropdownState
       pageBuilder: (context, animation, secondaryAnimation) {
         return SubscriptionsGovernorateDialog(
           governorates: searchCtrl.governorates,
-          selectedGovernorate: homeCtrl.selectedGovernorate,
-          selectedProvinces: homeCtrl.selectedProvinces,
+          selectedGovernorate: selectedGovernorate,
+          selectedProvinces: selectedProvinces,
           onApply: (governorate, provinces) {
             log('Subscriptions Dialog onApply called with governorate: $governorate, provinces: $provinces');
 
             // Update governorate selection
             if (governorate != null) {
               log('Selected governorate: $governorate');
-              homeCtrl.filterGymsByGovernorate(governorate);
+              switch (widget.screenType) {
+                case ScreenType.group:
+                  homeCtrl.filterGroupGymsByGovernorate(governorate);
+                  break;
+                case ScreenType.individual:
+                  homeCtrl.filterIndividualGymsByGovernorate(governorate);
+                  break;
+              }
             } else {
               log('Clearing governorate selection');
-              homeCtrl.filterGymsByGovernorate(null);
+              switch (widget.screenType) {
+                case ScreenType.group:
+                  homeCtrl.filterGroupGymsByGovernorate(null);
+                  break;
+                case ScreenType.individual:
+                  homeCtrl.filterIndividualGymsByGovernorate(null);
+                  break;
+              }
             }
 
             // Update provinces selection in both controllers
             searchCtrl.selectedProvinces.clear();
             searchCtrl.selectedProvinces.addAll(provinces);
-            homeCtrl.filterGymsByProvinces(provinces);
+
+            switch (widget.screenType) {
+              case ScreenType.group:
+                homeCtrl.filterGroupGymsByProvinces(provinces);
+                break;
+              case ScreenType.individual:
+                homeCtrl.filterIndividualGymsByProvinces(provinces);
+                break;
+            }
             log('Selected provinces: ${searchCtrl.selectedProvinces}');
 
             // Update UI

@@ -12,7 +12,7 @@ import 'package:gym_zones/models/user.dart';
 import '../../../models/subscription_plan.dart';
 
 class IndividualSubscriptionCard extends StatelessWidget {
-  final MyNewData plan;
+  final IndivdualGymData plan;
   // final VoidCallback btnClick;
 
   const IndividualSubscriptionCard({
@@ -43,9 +43,9 @@ class IndividualSubscriptionCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  maxLines: 3,
+                  maxLines: 4,
                   overflow: TextOverflow.ellipsis,
-                  "${plan.title.toString()}",
+                  "${GetStorage().read('lang') == 'en' ? plan.title.toString() : plan.titleAr.toString()}",
                   style: TextStyle(
                     fontSize: 16.sp,
                   ),

@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:gym_zones/common/constants/functions.dart';
 import 'package:gym_zones/common/widgets/loading_widget.dart';
 import 'package:gym_zones/controllers/home_controller.dart';
-
+import 'package:gym_zones/controllers/search_controller.dart' as search_ctrl;
+import 'package:gym_zones/views/subscriptions/widgets/subscriptions_governorate_dropdown.dart'
+    as dropdown;
 import '../../common/constants/constants.dart';
 import '../../common/navigation/app_routes.dart';
 import '../../common/widgets/custom_bottom_nav_bar.dart';
@@ -19,9 +20,34 @@ class SubscriptionsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Initialize SearchController for group screen
+    Get.put(
+        search_ctrl.SearchController(
+            screenType: search_ctrl.SearchScreenType.group),
+        tag: 'group_search');
+
     return WillPopScope(
       onWillPop: () async => false,
       child: GetBuilder<SubscriptionsController>(builder: (ctrl) {
+        // Clear group search filters when entering this view
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          try {
+            final homeController = Get.find<HomeController>();
+            homeController.clearGroupFilters();
+
+            // Clear the group-specific search controller
+            try {
+              final searchController =
+                  Get.find<search_ctrl.SearchController>(tag: 'group_search');
+              searchController.clearSearchQuery();
+            } catch (e) {
+              // SearchController might not exist yet
+            }
+          } catch (e) {
+            // HomeController might not be initialized yet
+          }
+        });
+
         return Scaffold(
           appBar: AppBar(
             backgroundColor: const Color.fromARGB(123, 221, 220, 220),
@@ -32,7 +58,7 @@ class SubscriptionsView extends StatelessWidget {
           ),
           body: Builder(
             builder: (_) {
-              if (ctrl.plans == null) {
+              if (ctrl.plans == null || ctrl.isLoadingGroupGyms) {
                 return const LoadingWidget();
               }
 
@@ -42,84 +68,100 @@ class SubscriptionsView extends StatelessWidget {
 
               return Container(
                 padding: EdgeInsets.all(16.sp),
-                child: ListView(
-                  shrinkWrap: true,
-                  children: [
-                    Text(
-                      'Subscription Plans'.tr,
-                      style: TextStyle(fontSize: 16.sp, color: Colors.black),
-                      textAlign: TextAlign.start,
-                    ),
-                    GridView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        childAspectRatio: 0.85,
-                        crossAxisSpacing: 24.w,
-                        mainAxisSpacing: 12.h,
-                        mainAxisExtent: 230.h,
-                      ),
-                      itemCount: ctrl.plans?.length,
-                      itemBuilder: (context, index) {
-                        final plan = ctrl.plans![index];
-                        return SubscriptionCard(
-                          plan: plan,
-                          btnClick: () {
-                            if (GetStorage().read('token') != null) {
-                              ctrl.totalAmount.value = plan.amount;
-                              Get.toNamed(AppRoutes.cartPage,
-                                  arguments: {"item": plan});
-                              // showGiftDialog(
-                              //   context: context,
-                              //   gift: () =>
-                              //       Get.toNamed(AppRoutes.giftSubscription),
-                              //   subscribe: () {
-                              //     ctrl.totalAmount.value = plan.amount;
-                              //     Get.toNamed(AppRoutes.cartPage,
-                              //         arguments: {"item": plan});
-                              //   },
-                              // );
-                            } else {
-                              Get.toNamed(AppRoutes.login);
-                            }
-
-                            // if (GetStorage().read('token') != null) {
-                            //   ctrl.totalAmount.value = plan.amount;
-                            //   Get.toNamed(AppRoutes.cartPage,
-                            //       arguments: {"item": plan});
-                            // } else {
-                            //   Get.toNamed(AppRoutes.login);
-                            // }
-                          },
-                        );
-                      },
-                    ),
-                    SizedBox(height: 46.h),
-                    GetBuilder<HomeController>(
-                      builder: (homeCtrl) => Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                child: RefreshIndicator(
+                  onRefresh: () async {
+                    ctrl.onInit();
+                  },
+                  child: GetBuilder<SubscriptionsController>(
+                    builder: (subscriptionsCtrl) {
+                      return ListView(
+                        controller: subscriptionsCtrl.scrollController,
+                        shrinkWrap: true,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Group Gyms'.tr,
-                                textAlign: TextAlign.start,
-                                style: TextStyle(
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              const SubscriptionsGovernorateDropdown(),
-                            ],
+                          Text(
+                            'Subscription Plans'.tr,
+                            style:
+                                TextStyle(fontSize: 16.sp, color: Colors.black),
+                            textAlign: TextAlign.start,
                           ),
-                          SizedBox(height: 8.h),
-                          const FilteredGymList(),
+                          GridView.builder(
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio: 0.85,
+                              crossAxisSpacing: 24.w,
+                              mainAxisSpacing: 12.h,
+                              mainAxisExtent: 230.h,
+                            ),
+                            itemCount: ctrl.plans?.length,
+                            itemBuilder: (context, index) {
+                              final plan = ctrl.plans![index];
+                              return SubscriptionCard(
+                                plan: plan,
+                                btnClick: () {
+                                  if (GetStorage().read('token') != null) {
+                                    ctrl.totalAmount.value = plan.amount;
+                                    Get.toNamed(AppRoutes.cartPage,
+                                        arguments: {"item": plan});
+                                  } else {
+                                    Get.toNamed(AppRoutes.login);
+                                  }
+                                },
+                              );
+                            },
+                          ),
+                          SizedBox(height: 46.h),
+                          GetBuilder<HomeController>(
+                            builder: (homeCtrl) => Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Group Gyms'.tr,
+                                      textAlign: TextAlign.start,
+                                      style: TextStyle(
+                                        fontSize: 16.sp,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                    const dropdown
+                                        .SubscriptionsGovernorateDropdown(
+                                      screenType: dropdown.ScreenType.group,
+                                    ),
+                                  ],
+                                ),
+                                if (homeCtrl.gymsToDisplay != null &&
+                                    homeCtrl.gymsToDisplay!.isNotEmpty) ...[
+                                  SizedBox(height: 8.h),
+                                  const FilteredGymList(),
+                                  SizedBox(height: 5.h),
+                                  if (subscriptionsCtrl.isLoadingMoreData)
+                                    Center(child: CircularProgressIndicator())
+                                  else if (subscriptionsCtrl
+                                          .isMoreGroupGymsData ==
+                                      false)
+                                    Center(child: Text("No more gyms".tr)),
+                                ] else ...[
+                                  Container(
+                                    margin: EdgeInsets.only(top: 0.35.sh),
+                                    child: Center(
+                                      child: Text(
+                                          'No gyms available right now'.tr),
+                                    ),
+                                  )
+                                ],
+                              ],
+                            ),
+                          ),
                         ],
-                      ),
-                    )
-                  ],
+                      );
+                    },
+                  ),
                 ),
               );
             },

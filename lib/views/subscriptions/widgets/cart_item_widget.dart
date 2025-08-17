@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:gym_zones/common/styles/app_colors.dart';
 import 'package:gym_zones/models/Individual_subscription_plan.dart';
 
@@ -80,7 +81,7 @@ class CartItemWidget extends StatelessWidget {
 }
 
 class CartItemWidgetIndividual extends StatelessWidget {
-  final MyNewData item;
+  final IndivdualGymData item;
 
   const CartItemWidgetIndividual({super.key, required this.item});
 
@@ -128,7 +129,9 @@ class CartItemWidgetIndividual extends StatelessWidget {
                       maxWidth: 220.w,
                     ),
                     child: Text(
-                      "${item.title}",
+                      GetStorage().read("lang") == "en"
+                          ? "${item.title}"
+                          : "${item.titleAr}",
                       style: TextStyle(
                         fontSize: 18.sp,
                         // color: Colors.black,

@@ -43,6 +43,8 @@ class SearchResult {
   bool get isValid => isGroup ? gym != null : individualGym != null;
 }
 
+enum SearchScreenType { group, individual, general }
+
 class SearchController extends GetxController {
   PagingController<int, SearchResult>? pagingController;
 
@@ -55,6 +57,11 @@ class SearchController extends GetxController {
   var selectedProvinces = <int>[].obs;
   var showMixedGyms = RxBool(true);
 
+  // Screen type to differentiate between group and individual screens
+  SearchScreenType screenType;
+
+  SearchController({this.screenType = SearchScreenType.general});
+
   @override
   void onInit() {
     super.onInit();
@@ -64,6 +71,36 @@ class SearchController extends GetxController {
 
   List<Governorate>? _governorates;
   List<Governorate>? get governorates => _governorates;
+
+  void clearSearchQuery() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final homeController = Get.find<HomeController>();
+
+      // Clear search based on screen type
+      switch (screenType) {
+        case SearchScreenType.group:
+          homeController.filterGroupGymsBySearch(null);
+          break;
+        case SearchScreenType.individual:
+          homeController.filterIndividualGymsBySearch(null);
+          break;
+        case SearchScreenType.general:
+        default:
+          homeController.filterGymsBySearch(null);
+          break;
+      }
+
+      searchResults.clear();
+      keywordsController.clear();
+
+      // Reset pagination controller if it exists
+      if (pagingController != null) {
+        pagingController!.refresh();
+      }
+
+      update();
+    });
+  }
 
   void _fetchGovernoratesWithProvinces() async {
     final response = await http.get(
@@ -137,7 +174,10 @@ class SearchController extends GetxController {
             ? groupDecodedJson
             : groupDecodedJson['data'] ?? [];
         for (var gymData in groupData) {
-          combinedResults.add(SearchResult.fromGym(Gym.fromJson(gymData)));
+          final searchResult = SearchResult.fromGym(Gym.fromJson(gymData));
+          if (searchResult.isValid) {
+            combinedResults.add(searchResult);
+          }
         }
       }
 
@@ -159,24 +199,35 @@ class SearchController extends GetxController {
             ? individualDecodedJson
             : individualDecodedJson['data'] ?? [];
         for (var gymData in individualData) {
-          combinedResults.add(SearchResult.fromIndividualGym(
-              individual.IndividualGym.fromJson(gymData)));
+          final searchResult = SearchResult.fromIndividualGym(
+              individual.IndividualGym.fromJson(gymData));
+          if (searchResult.isValid) {
+            combinedResults.add(searchResult);
+          }
         }
       }
 
       // Handle pagination
       final isLastPage = combinedResults.length < 20;
-      if (isLastPage) {
-        pagingController!.appendLastPage(combinedResults);
-      } else {
-        final nextPageKey = pageKey + 1;
-        pagingController!.appendPage(combinedResults, nextPageKey);
+      if (pagingController != null) {
+        if (isLastPage) {
+          pagingController!.appendLastPage(combinedResults);
+        } else {
+          final nextPageKey = pageKey + 1;
+          pagingController!.appendPage(combinedResults, nextPageKey);
+        }
       }
 
-      searchResults.addAll(combinedResults);
+      // Only add to searchResults on first page to avoid accumulation
+      if (pageKey == 1) {
+        searchResults.clear();
+        searchResults.addAll(combinedResults);
+      }
     } catch (e) {
       // Handle error
-      pagingController!.error = e;
+      if (pagingController != null) {
+        pagingController!.error = e;
+      }
     }
   }
 

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -19,6 +21,7 @@ class IndividualGymCard extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: 8.h),
       child: InkWell(
         onTap: () {
+          log("${gym.id}");
           Get.toNamed(AppRoutes.individualGymDetails, arguments: {
             "individualGym": gym,
           });
@@ -44,36 +47,6 @@ class IndividualGymCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                // CarouselSlider.builder(
-                //   itemCount: gym.gallery!.length,
-                //   itemBuilder: (context, index, realIdx) {
-                //     return GestureDetector(
-                //       onTap: () {
-                //         Get.toNamed(
-                //           AppRoutes.gymGallery,
-                //           arguments: {
-                //             'images': gym.gallery,
-                //             'initailImageIndex': index,
-                //           },
-                //         );
-                //       },
-                //       child: ClipRRect(
-                //         borderRadius: BorderRadius.circular(10.r),
-                //         child: RebiImage(
-                //           imageUrl: '${Api.IMAGE_PREFIX}${gym.gallery![index]}',
-                //           fit: BoxFit.cover,
-                //           width: Get.width,
-                //         ),
-                //       ),
-                //     );
-                //   },
-                //   options: CarouselOptions(
-                //     enlargeCenterPage: true,
-                //     autoPlay: true,
-                //     padEnds: false,
-                //     viewportFraction: 1,
-                //   ),
-                // ),
                 SizedBox(height: 10.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -97,6 +70,8 @@ class IndividualGymCard extends StatelessWidget {
                             Get.locale!.languageCode == 'en'
                                 ? gym.name!
                                 : gym.nameAr!,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                             textAlign: TextAlign.start,
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
@@ -109,6 +84,7 @@ class IndividualGymCard extends StatelessWidget {
                                 : '${gym.province!.governorate!.nameAr},${gym.province!.nameAr}',
                             textAlign: TextAlign.start,
                             maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontSize: 14.sp,
                               color: Colors.grey.shade500,
@@ -152,124 +128,41 @@ class IndividualGymCard extends StatelessWidget {
                     )
                   ],
                 ),
-                SizedBox(height: 4.h),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8.w),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(
-                          left: Get.locale!.languageCode == 'en' ? 64.w : 0,
-                          right: Get.locale!.languageCode == 'ar' ? 64.w : 0,
-                        ),
-                        child: Text(
-                          "subscription start with".tr,
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            color: Colors.grey.shade500,
-                            fontWeight: FontWeight.w500,
+                if (gym.lowestPlanePrice != null) ...[
+                  SizedBox(height: 4.h),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 8.w),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          margin: EdgeInsets.only(
+                            left: Get.locale!.languageCode == 'en' ? 20.w : 0,
+                            right: Get.locale!.languageCode == 'ar' ? 64.w : 0,
+                          ),
+                          child: Text(
+                            "subscription start from".tr,
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              color: Colors.grey.shade500,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
-                      ),
-                      Text(
-                        '${'OMR'.tr} ${gym.basePrice}',
-                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.primary),
-                      ),
-                    ],
-                  ),
-                ),
-                // Padding(
-                //   padding: EdgeInsets.symmetric(vertical: 8.h),
-                //   child: Text(
-                //     Get.locale!.languageCode == 'en'
-                //         ? gym.description ?? ''
-                //         : gym.descriptionAr ?? '',
-                //     textAlign: TextAlign.start,
-                //     style: TextStyle(fontSize: 14.sp),
-                //   ),
-                // ),
-                // SizedBox(height: 8.h),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //   children: [
-                //     Container(
-                //       constraints: BoxConstraints(maxWidth: 0.44.sw),
-                //       child: ElevatedButton.icon(
-                //         onPressed: () {
-                //           launchUrl(
-                //             Uri.parse(gym.locationUrl),
-                //             mode: LaunchMode.externalApplication,
-                //           );
-                //         },
-                //         icon: Icon(
-                //           Icons.map_rounded,
-                //           color: Colors.white,
-                //           size: 16.sp,
-                //         ),
-                //         label: FittedBox(child: Text('Locate on Maps'.tr)),
-                //         style: ButtonStyle(
-                //           padding: MaterialStateProperty.all(
-                //             EdgeInsets.symmetric(
-                //               horizontal: 16.w,
-                //               vertical: 8.h,
-                //             ),
-                //           ),
-                //           shape: MaterialStateProperty.all(
-                //             RoundedRectangleBorder(
-                //               borderRadius: BorderRadius.circular(16.r),
-                //             ),
-                //           ),
-                //         ),
-                //       ),
-                //     ),
-                //     if (gym.isMixed)
-                //       Row(
-                //         mainAxisSize: MainAxisSize.min,
-                //         crossAxisAlignment: CrossAxisAlignment.center,
-                //         children: [
-                //           Icon(
-                //             Icons.wc_rounded,
-                //             color: AppColors.primary,
-                //             size: 24.sp,
-                //           ),
-                //           SizedBox(height: 4.h),
-                //           Text('MIXED'.tr, style: TextStyle(fontSize: 12.sp)),
-                //         ],
-                //       )
-                //     else if (gym.gender == 'female')
-                //       Row(
-                //         mainAxisSize: MainAxisSize.min,
-                //         crossAxisAlignment: CrossAxisAlignment.center,
-                //         children: [
-                //           Icon(
-                //             Icons.woman_2_rounded,
-                //             color: AppColors.primary,
-                //             size: 24.sp,
-                //           ),
-                //           SizedBox(height: 4.h),
-                //           Text('WOMEN'.tr, style: TextStyle(fontSize: 12.sp)),
-                //         ],
-                //       )
-                //     else
-                //       Row(
-                //         mainAxisSize: MainAxisSize.min,
-                //         crossAxisAlignment: CrossAxisAlignment.center,
-                //         children: [
-                //           Icon(
-                //             Icons.man_2_rounded,
-                //             color: AppColors.primary,
-                //             size: 24.sp,
-                //           ),
-                //           SizedBox(height: 4.h),
-                //           Text('MEN'.tr, style: TextStyle(fontSize: 12.sp)),
-                //         ],
-                //       )
-                //   ],
-                // ),
+                        Text(
+                          '${'OMR'.tr} ${double.parse(gym.lowestPlanePrice!).toStringAsFixed(2)}',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium!
+                              .copyWith(
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.primary),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
               ],
             ),
           ),

@@ -32,7 +32,7 @@ class OfferSection extends StatelessWidget {
             ),
             GestureDetector(
               onTap: () {
-                Get.find<CustomBottomNavBarController>().changePage(2);
+                // Get.find<CustomBottomNavBarController>().changePage(2);
                 Get.toNamed(AppRoutes.categoriesPage);
               },
               child: Text(

@@ -304,8 +304,8 @@ class IndividualGymDetailsScreen
                                     crossAxisCount: 2,
                                     childAspectRatio:
                                         GetStorage().read("lang") == "en"
-                                            ? 1.2.w
-                                            : 1.w,
+                                            ? 1.1.w
+                                            : 0.9.w,
                                     crossAxisSpacing:
                                         GetStorage().read("lang") == "en"
                                             ? 10.w
@@ -363,7 +363,7 @@ class IndividualGymDetailsScreen
                                               child: ListView(
                                                 padding: EdgeInsets.zero,
                                                 children: [
-                                                  ...scudule.startTime!.map(
+                                                  ...scudule.startTime12h!.map(
                                                     (time) => Row(
                                                       spacing: 5.w,
                                                       children: [
@@ -436,6 +436,10 @@ class IndividualGymDetailsScreen
                               );
                             },
                             child: CachedNetworkImage(
+                              errorWidget: (context, url, error) {
+                                return Image.asset(
+                                    'assets/images/launcher-icon.png');
+                              },
                               imageUrl:
                                   '${Api.IMAGE_PREFIX}${controller.gym!.gallery![index].imagePath}',
                               fit: BoxFit.cover,

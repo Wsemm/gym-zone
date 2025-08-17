@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -19,11 +20,13 @@ class NewVisitController extends GetxController {
         'gym_id': gymId,
       },
     );
-
+    log("qr scan response: ${response.body}");
+    log("qr scan request: ${response.request}");
+    log("qr scan gym_id: $gymId");
     if (response.statusCode == 201 || response.statusCode == 200) {
       return Visit.fromJson(jsonDecode(response.body)['visit']);
     } else {
       return null;
     }
-  } 
+  }
 }

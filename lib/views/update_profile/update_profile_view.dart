@@ -287,54 +287,71 @@ class UpdateProfileView extends GetView<UpdateProfileController> {
                       )
                   ],
                 ),
-                TextFormField(
-                  validator: (controller.isGoogle || controller.isApple)
-                      ? AppValidator.validator(
-                          type: ValidationType.phoneNumber,
-                        )
-                      : null,
-                  controller: controller.phoneNumberController,
-                  focusNode: _phoneNumberFocusNode,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(color: AppColors.primary),
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
-                    // labelText: ''.tr,
-                    prefix: DropdownButtonFormField<String>(
-                      onTap: () => _phoneNumberFocusNode.requestFocus(),
-                      decoration: InputDecoration(
-                        constraints: BoxConstraints(maxWidth: 0.25.sw),
-                        contentPadding: EdgeInsets.zero,
-                        border: InputBorder.none,
+                SizedBox(height: 6.h),
+                Container(
+                  height: 48.h,
+                  child: TextFormField(
+                    validator: (controller.isGoogle || controller.isApple)
+                        ? AppValidator.validator(
+                            type: ValidationType.phoneNumber,
+                          )
+                        : null,
+                    enableInteractiveSelection: false,
+                    controller: controller.phoneNumberController,
+                    focusNode: _phoneNumberFocusNode,
+                    style: TextStyle(fontSize: 14.sp),
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 12.w,
+                        vertical: 12.h,
                       ),
-                      iconSize: 0,
-                      value: controller.selectedCountryCode,
-                      onChanged: (value) {
-                        controller.setCountyCode(value!);
-                      },
-                      items: countries.map<DropdownMenuItem<String>>((country) {
-                        return DropdownMenuItem<String>(
-                          value: country['code']!.tr,
-                          child: FittedBox(
-                            child: GetBuilder<UpdateProfileController>(
-                                builder: (_) {
-                              return Text(
-                                country['display']!.tr,
-                                style: TextStyle(
-                                  color: country['code'] ==
-                                          controller.selectedCountryCode
-                                      ? AppColors.primary
-                                      : Theme.of(context)
-                                          .textTheme
-                                          .bodySmall!
-                                          .color,
-                                ),
-                              );
-                            }),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: AppColors.primary),
+                        borderRadius: BorderRadius.circular(8.r),
+                      ),
+                      hintText: "Enter phone number".tr,
+                      hintStyle: TextStyle(fontSize: 14.sp),
+                      prefixIcon: Container(
+                        width: 0.25.sw,
+                        padding: EdgeInsets.only(
+                            left: 8.w, right: 4.w, top: 2.h, bottom: 2.h),
+                        child: DropdownButtonFormField<String>(
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.zero,
                           ),
-                        );
-                      }).toList(),
+                          iconSize: 16.sp,
+                          value: controller.selectedCountryCode,
+                          onChanged: (value) {
+                            controller.setCountyCode(value!);
+                            _phoneNumberFocusNode.requestFocus();
+                          },
+                          items: countries
+                              .map<DropdownMenuItem<String>>((country) {
+                            return DropdownMenuItem<String>(
+                              value: country['code']!.tr,
+                              child: FittedBox(
+                                child: GetBuilder<UpdateProfileController>(
+                                    builder: (_) {
+                                  return Text(
+                                    country['display']!.tr,
+                                    style: TextStyle(
+                                      fontSize: 12.sp,
+                                      color: country['code'] ==
+                                              controller.selectedCountryCode
+                                          ? AppColors.primary
+                                          : Theme.of(context)
+                                              .textTheme
+                                              .bodySmall!
+                                              .color,
+                                    ),
+                                  );
+                                }),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -343,6 +360,7 @@ class UpdateProfileView extends GetView<UpdateProfileController> {
                   SizedBox(height: 16.h),
                   TextFormField(
                     readOnly: true,
+                    enableInteractiveSelection: false,
                     decoration: InputDecoration(
                       floatingLabelBehavior: FloatingLabelBehavior.always,
                       border: OutlineInputBorder(
@@ -367,6 +385,7 @@ class UpdateProfileView extends GetView<UpdateProfileController> {
                   controller: controller.bioController,
                   minLines: 2,
                   maxLines: 2,
+                  enableInteractiveSelection: false,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderSide: BorderSide(color: AppColors.primary),

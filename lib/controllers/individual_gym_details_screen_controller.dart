@@ -43,7 +43,7 @@ class IndividualGymDetailsScreenController extends GetxController {
       _plans = IndividualSubscriptionPlan.fromJson(plansJson);
     } else {
       isLoading = false;
-      _plans = IndividualSubscriptionPlan(data: [MyNewData.fake()]);
+      _plans = IndividualSubscriptionPlan(data: [IndivdualGymData.fake()]);
       update();
     }
 

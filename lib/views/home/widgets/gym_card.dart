@@ -31,6 +31,8 @@ class GymCard extends StatelessWidget {
       ),
       child: InkWell(
         onTap: () {
+          log("# log Gym Id  ${gym.id}");
+          log("# log Gym Type  ${gym.gymType}");
           Navigator.push(
             context,
             MaterialPageRoute(

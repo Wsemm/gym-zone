@@ -27,6 +27,9 @@ class SubscriptionCard extends StatelessWidget {
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                SizedBox(
+                  height: 10.h,
+                ),
                 Text(
                   plan.durationText,
                   style: TextStyle(fontSize: 16.sp, color: AppColors.textGrey),

@@ -1,6 +1,6 @@
 class IndividualSubscriptionPlan {
   String? message;
-  List<MyNewData>? data;
+  List<IndivdualGymData>? data;
 
   IndividualSubscriptionPlan({this.message, this.data});
 
@@ -8,7 +8,9 @@ class IndividualSubscriptionPlan {
     message = json["message"];
     data = json["data"] == null
         ? null
-        : (json["data"] as List).map((e) => MyNewData.fromJson(e)).toList();
+        : (json["data"] as List)
+            .map((e) => IndivdualGymData.fromJson(e))
+            .toList();
   }
 
   static List<IndividualSubscriptionPlan> fromList(
@@ -26,7 +28,7 @@ class IndividualSubscriptionPlan {
   }
 }
 
-class MyNewData {
+class IndivdualGymData {
   int? id;
   String? amount;
   int? days;
@@ -36,11 +38,12 @@ class MyNewData {
   String? createdAt;
   String? updatedAt;
   String? title;
+  String? titleAr;
   double? totalAmount;
   int? basePrice;
   int? totalPrice;
 
-  MyNewData(
+  IndivdualGymData(
       {this.id,
       this.amount,
       this.days,
@@ -52,9 +55,10 @@ class MyNewData {
       this.totalAmount,
       this.basePrice,
       this.totalPrice,
-      this.title});
+      this.title,
+      this.titleAr});
 
-  MyNewData.fromJson(Map<String, dynamic> json) {
+  IndivdualGymData.fromJson(Map<String, dynamic> json) {
     id = json["id"];
     amount = json["amount"];
     days = json["days"];
@@ -67,10 +71,11 @@ class MyNewData {
     basePrice = json["base_price"];
     totalPrice = json["total_price"];
     title = json["title"];
+    titleAr = json["title_ar"];
   }
 
-  static List<MyNewData> fromList(List<Map<String, dynamic>> list) {
-    return list.map(MyNewData.fromJson).toList();
+  static List<IndivdualGymData> fromList(List<Map<String, dynamic>> list) {
+    return list.map(IndivdualGymData.fromJson).toList();
   }
 
   Map<String, dynamic> toJson() {
@@ -87,11 +92,12 @@ class MyNewData {
     _data["base_price"] = basePrice;
     _data["total_price"] = totalPrice;
     _data["title"] = title;
+    _data["title_ar"] = titleAr;
     return _data;
   }
 
-  factory MyNewData.fake() {
-    return MyNewData(
+  factory IndivdualGymData.fake() {
+    return IndivdualGymData(
         id: 1,
         amount: "50",
         days: 30,
@@ -103,6 +109,7 @@ class MyNewData {
         totalAmount: 29.99,
         basePrice: 25,
         totalPrice: 25,
-        title: "");
+        title: "title",
+        titleAr: "titleAr");
   }
 }

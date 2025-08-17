@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:gym_zones/common/constants/my_enum.dart';
 import 'package:gym_zones/views/home/widgets/ad_card.dart';
 import 'package:gym_zones/views/home/widgets/free_week_card.dart';
@@ -68,10 +69,17 @@ class HomeView extends StatelessWidget {
                           padding: EdgeInsets.all(16.w),
                           sliver: SliverList(
                             delegate: SliverChildListDelegate([
-                              InkWell(
-                                  onTap: () =>
-                                      Get.toNamed(AppRoutes.successPayment),
-                                  child: Text("Go to succsses")),
+                              // InkWell(
+                              //   onTap: () {
+                              //     print(
+                              //         "${ctrl.user!.id}  ======  ${GetStorage().read("token")}");
+                              //   },
+                              //   child: Text("daw"),
+                              // ),
+                              // InkWell(
+                              //     onTap: () =>
+                              //         Get.toNamed(AppRoutes.successPayment),
+                              //     child: Text("Go to succsses")),
                               SizedBox(
                                 height: 3.h,
                               ),

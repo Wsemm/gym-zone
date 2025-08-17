@@ -16,6 +16,7 @@ class CustomTextFormFieldProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      enableInteractiveSelection: false,
       validator: validator,
       controller: controller,
       decoration: InputDecoration(

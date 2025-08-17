@@ -51,12 +51,11 @@ class IndividualGymsSection extends StatelessWidget {
         ),
         if (ctrl.individualGyms?.isNotEmpty == true)
           Container(
-            constraints: BoxConstraints(maxHeight: 280.h, minHeight: 260.h),
+            constraints: BoxConstraints(minHeight: 260.h, maxHeight: 280.h),
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: ctrl.individualGyms?.length,
               itemBuilder: (context, index) => Container(
-                constraints: BoxConstraints(maxHeight: 280.h, minHeight: 260.h),
                 width: 0.8.sw, // Set width for each gym card
                 margin: EdgeInsets.only(right: 16.w),
                 child: IndividualGymCard(gym: ctrl.individualGyms![index]),

@@ -12,4 +12,5 @@ class Api {
   // static const IMAGE_PREFIX = '$BASE_URL/storage/'; // Local
   // static const IMAGE_PREFIX = '$BASE_URL/storage/app/public/'; // Testing
   static const IMAGE_PREFIX = '$BASE_URL/public/storage/'; // Production
+  static const IMAGE_PREFIX_Test = '$BASE_URL/storage/app/public/'; // Testing
 }

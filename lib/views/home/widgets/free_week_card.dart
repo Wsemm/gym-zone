@@ -6,6 +6,7 @@ import 'package:gym_zones/common/constants/app_images.dart';
 import 'package:gym_zones/common/navigation/app_routes.dart';
 import 'package:gym_zones/common/styles/app_colors.dart';
 import 'package:gym_zones/controllers/custom_bottom_nav_bar_controller.dart';
+import 'package:gym_zones/controllers/home_controller.dart';
 
 class FreeWeekCard extends StatelessWidget {
   const FreeWeekCard({super.key});
@@ -56,7 +57,7 @@ class FreeWeekCard extends StatelessWidget {
                               ? 155.w
                               : 150.w),
                       child: Text(
-                        "Try any gym for free once during your first 7 days of registration."
+                        "Try any group gym for free once during your first 7 days of registration."
                             .tr,
                         style: TextStyle(
                             height: 1.8,
@@ -85,8 +86,11 @@ class FreeWeekCard extends StatelessWidget {
           left: GetStorage().read('lang') == 'ar' ? 10 : null,
           child: GestureDetector(
             onTap: () {
-              Get.find<CustomBottomNavBarController>().changePage(1);
-              Get.toNamed(AppRoutes.subscriptions);
+              // Get.find<CustomBottomNavBarController>().changePage(1);
+              // Get.toNamed(AppRoutes.subscriptions);
+              Get.find<HomeController>().user != null
+                  ? Get.toNamed(AppRoutes.qrScan)
+                  : Get.offAllNamed(AppRoutes.login);
             },
             child: Container(
               padding: EdgeInsets.all(10),
@@ -95,7 +99,7 @@ class FreeWeekCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10.r),
               ),
               child: Text(
-                "Group Gyms".tr,
+                "Scan gym Qr".tr,
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: 12.sp,

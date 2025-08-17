@@ -52,24 +52,23 @@ class OfferItemWidget extends StatelessWidget {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(10.r),
                           child: RebiImage(
-                            imageUrl: "${Api.IMAGE_PREFIX}${item.coverPath}",
+                            imageUrl:
+                                "${Api.IMAGE_PREFIX_Test}${item.coverPath}",
                             fit: BoxFit.fill,
                           ),
                         ),
                       ),
-                      if(item.discount != null && item.discount != 0)
-
+                      if (item.discount != null && item.discount != 0)
                         Transform.rotate(
                           angle: 0,
                           child: Container(
                             width: 100,
                             height: 40,
-                            margin:
-                            const EdgeInsets.symmetric(vertical: 10 , horizontal: 10),
-                            padding:
-                            const EdgeInsets.symmetric(vertical: 5),
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 10),
+                            padding: const EdgeInsets.symmetric(vertical: 5),
                             decoration: BoxDecoration(
-                                color:Colors.red,
+                                color: Colors.red,
                                 borderRadius: BorderRadius.circular(10)),
                             child: Center(
                               child: Text(
@@ -82,7 +81,6 @@ class OfferItemWidget extends StatelessWidget {
                             ),
                           ),
                         ),
-                      
                     ],
                   ),
                 ),
@@ -117,7 +115,7 @@ class OfferItemWidget extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(50.r),
                                   child: RebiImage(
                                     imageUrl:
-                                        "${Api.IMAGE_PREFIX}${item.logoPath}",
+                                        "${Api.IMAGE_PREFIX_Test}${item.logoPath}",
                                     fit: BoxFit.cover,
                                   ))),
                         ),
@@ -176,7 +174,8 @@ class OfferItemWidget extends StatelessWidget {
                             /// Get Place name  from location details
                             ///
 
-                            String  locationUrl  = "https://www.google.com/maps/place/${item.longitude},${item.latitude}/20z";
+                            String locationUrl =
+                                "https://www.google.com/maps/place/${item.longitude},${item.latitude}/20z";
                             launchUrl(
                               Uri.parse(locationUrl),
                               mode: LaunchMode.externalApplication,

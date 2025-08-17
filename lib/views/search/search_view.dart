@@ -90,14 +90,19 @@ class SearchView extends StatelessWidget {
                       ? const SizedBox()
                       : Expanded(
                           child: PagedListView<int, SearchResult>(
-                            shrinkWrap: true,
+                            shrinkWrap: false,
                             padding: EdgeInsets.zero,
                             pagingController: ctrl.pagingController!,
                             builderDelegate:
                                 PagedChildBuilderDelegate<SearchResult>(
                               transitionDuration:
-                                  const Duration(milliseconds: 500),
+                                  const Duration(milliseconds: 300),
                               itemBuilder: (context, item, index) {
+                                // Add validation check
+                                if (!item.isValid) {
+                                  return const SizedBox.shrink();
+                                }
+
                                 if (item.isGroup && item.gym != null) {
                                   return GymCard(gym: item.gym!);
                                 } else if (!item.isGroup &&

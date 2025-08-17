@@ -83,8 +83,11 @@ class IndividualFilteredGymList extends StatelessWidget {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: homeCtrl.individualGymsToDisplay!.length,
-            itemBuilder: (context, index) => IndividualGymCard(
-                gym: homeCtrl.individualGymsToDisplay![index]),
+            itemBuilder: (context, index) => Container(
+              constraints: BoxConstraints(maxHeight: 280.h),
+              child: IndividualGymCard(
+                  gym: homeCtrl.individualGymsToDisplay![index]),
+            ),
           );
         } else {
           return Column(

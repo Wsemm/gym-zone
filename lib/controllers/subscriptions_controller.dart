@@ -43,7 +43,21 @@ class SubscriptionsController extends GetxController {
   RxDouble totalAmountAfterDiscount = 0.0.obs;
   TextEditingController couponController = TextEditingController();
   RxBool isLoading = false.obs;
+  bool isLoadingGroupGyms = false;
   final GlobalKey<FormState> couponKey = GlobalKey<FormState>();
+
+  // Pagination variables for group gyms
+  ScrollController scrollController = ScrollController();
+  late String pageKey;
+  late bool isLoadingMoreData;
+  late bool? isMoreGroupGymsData;
+
+  void resetGroupGymsPagination() {
+    pageKey = "2";
+    isLoadingMoreData = false;
+    isMoreGroupGymsData = true;
+    update();
+  }
 
   @override
   void onInit() {
@@ -51,11 +65,58 @@ class SubscriptionsController extends GetxController {
     if (userInStorage != null) {
       _user = User.fromJson(userInStorage);
     }
+
+    // Initialize pagination
+    pageKey = "2";
+    isLoadingMoreData = false;
+    isMoreGroupGymsData = true;
+    scrollController.addListener(() {
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent) {
+        // Load more data when scroll reaches the bottom
+        loadMoreData();
+      }
+    });
+
     _fetchPlans();
     super.onInit();
   }
 
+  // @override
+  // void onClose() {
+  //   scrollController.dispose();
+  //   super.onClose();
+  // }
+
+  void loadMoreData() async {
+    final homeController = Get.find<HomeController>();
+    if (isMoreGroupGymsData == true) {
+      isLoadingMoreData = true;
+      update();
+
+      // Store current gym count to check if new data was added
+      final currentGymsCount = homeController.gymsToDisplay?.length ?? 0;
+
+      await homeController.fetchNearestGyms(pageKey: pageKey, doLoading: false);
+
+      // Check if new data was added
+      final newGymsCount = homeController.gymsToDisplay?.length ?? 0;
+      if (newGymsCount == currentGymsCount) {
+        // No new data added, means no more data available
+        isMoreGroupGymsData = false;
+      }
+
+      pageKey = (int.parse(pageKey) + 1).toString();
+    } else {
+      log("#log No More Data for group gyms");
+    }
+    isLoadingMoreData = false;
+    update();
+  }
+
   Future<void> _fetchPlans() async {
+    isLoadingGroupGyms = true;
+    update();
     final response = await http.get(Uri.parse(
         '${Api.API_URL}subscription-plans?gender=${_user != null ? user?.gender : GetStorage().read('gender')}'));
     if (response.statusCode == 200) {
@@ -65,7 +126,7 @@ class SubscriptionsController extends GetxController {
     } else {
       _plans = [];
     }
-
+    isLoadingGroupGyms = false;
     update();
   }
 

@@ -30,6 +30,7 @@ class IndividualGym {
   List<Schedules>? schedules;
   String? openingDay;
   String? openingDayAr;
+  String? lowestPlanePrice;
 
   IndividualGym({
     this.id,
@@ -61,6 +62,7 @@ class IndividualGym {
     this.schedules,
     this.openingDay,
     this.openingDayAr,
+    this.lowestPlanePrice,
   });
 
   IndividualGym.fromJson(Map<String, dynamic> json) {
@@ -103,6 +105,7 @@ class IndividualGym {
             .toList();
     openingDay = json["opening_day"];
     openingDayAr = json["opening_day_ar"];
+    lowestPlanePrice = json["lowest_plane_price"];
   }
 
   static List<IndividualGym> fromList(List<Map<String, dynamic>> list) {
@@ -125,6 +128,7 @@ class IndividualGym {
     _data["email"] = email;
     _data["bank_acc"] = bankAcc;
     _data["bank_name"] = bankName;
+    _data["lowest_plane_price"] = lowestPlanePrice;
     if (location != null) {
       _data["location"] = location?.toJson();
     }
@@ -337,11 +341,13 @@ class Branches {
 }
 
 class Schedules {
-  int? id;
+  String? id;
   String? gymId;
   String? dayOfWeek;
   String? dayOfWeekAr;
   List<String>? startTime;
+  List<String>? startTime12h;
+
   List<String>? daysNames;
   List<String>? daysNamesAr;
   bool? isRecurring;
@@ -354,6 +360,7 @@ class Schedules {
     this.dayOfWeek,
     this.dayOfWeekAr,
     this.startTime,
+    this.startTime12h,
     this.isRecurring,
     this.createdAt,
     this.updatedAt,
@@ -375,6 +382,18 @@ class Schedules {
       startTime = json["start_time"] == null
           ? null
           : (jsonDecode(json["start_time"]) as List)
+              .map((e) => e.toString())
+              .toList();
+    }
+
+    try {
+      startTime12h = json["start_time_12h"] == null
+          ? null
+          : (json["start_time_12h"] as List).map((e) => e.toString()).toList();
+    } catch (e) {
+      startTime12h = json["start_time_12h"] == null
+          ? null
+          : (jsonDecode(json["start_time_12h"]) as List)
               .map((e) => e.toString())
               .toList();
     }

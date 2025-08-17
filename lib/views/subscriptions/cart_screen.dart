@@ -20,7 +20,7 @@ class CartScreen extends GetView<SubscriptionsController> {
   @override
   Widget build(BuildContext context) {
     SubscriptionPlan? item;
-    MyNewData? itemIndividual;
+    IndivdualGymData? itemIndividual;
     bool isIndividual = false;
     if (Get.arguments != null) {
       if (Get.arguments["isIndividual"] != null) {

@@ -313,7 +313,7 @@ class RowServiceHeaderDelegate extends SliverPersistentHeaderDelegate {
             Align(
               alignment: Alignment.centerLeft,
               child: Container(
-                width: 35.w,
+                width: 15.w,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.centerRight,
@@ -329,7 +329,7 @@ class RowServiceHeaderDelegate extends SliverPersistentHeaderDelegate {
             Align(
               alignment: Alignment.centerRight,
               child: Container(
-                width: 35.w,
+                width: 15.w,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.centerLeft,

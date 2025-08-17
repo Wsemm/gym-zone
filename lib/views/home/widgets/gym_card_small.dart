@@ -11,19 +11,19 @@ import '../../../models/gym.dart';
 class GymCardSmall extends StatelessWidget {
   final Gym item;
   final VoidCallback btnClick;
-  const GymCardSmall({super.key,required this.item,required this.btnClick});
+  const GymCardSmall({super.key, required this.item, required this.btnClick});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: btnClick,
       highlightColor: AppColors.primary,
-      child:  SizedBox(
+      child: SizedBox(
         width: 125.w,
         height: 150.w,
         child: Card(
           elevation: 2,
-          child:Padding(
+          child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -46,9 +46,8 @@ class GymCardSmall extends StatelessWidget {
                       : item.nameAr ?? "",
                   maxLines: 2,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w700),
+                  style:
+                      TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w700),
                 )
               ],
             ),
